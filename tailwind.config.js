@@ -9,7 +9,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Roboto Flex', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial'],
+        sans: ['CustomFont', 'system-ui', '-apple-system', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial'],
         serif: ['Playfair Display', 'Georgia', 'Cambria', "Times New Roman", 'Times', 'serif'],
       },
     },
