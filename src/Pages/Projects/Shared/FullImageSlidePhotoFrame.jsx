@@ -158,7 +158,7 @@ function FullImageSlidePhotoFrame({
   }, []);
 
   return (
-    <div className="w-full max-w-lg mx-auto select-none">
+    <div className="w-full max-w-[90vw] sm:max-w-md md:max-w-lg mx-auto select-none">
       {/* Image Frame Container */}
       <div
         ref={containerRef}
@@ -193,27 +193,31 @@ function FullImageSlidePhotoFrame({
         />
 
         {/* Drag indicator overlay */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-black/40 px-3 py-1.5 rounded-full text-white text-xs backdrop-blur-sm">
-          <FaArrowRightArrowLeft className="w-3 h-3" />
+        <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-black/40 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-white text-[10px] sm:text-xs backdrop-blur-sm">
+          <FaArrowRightArrowLeft className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
           <span>Drag to explore</span>
         </div>
       </div>
 
       {/* Info Section */}
-      <div className="bg-white pt-4 pb-2">
-        <div className="flex justify-between items-start">
+      <div className="bg-white pt-3 sm:pt-4 pb-1 sm:pb-2 px-1 sm:px-0">
+        <div className="flex justify-between items-start gap-2 sm:gap-4">
           {/* Left side - Title and Year */}
-          <div className="space-y-1">
-            <h3 className="text-sm font-bold tracking-wide text-gray-900 uppercase">
+          <div className="space-y-0.5 sm:space-y-1 flex-1 min-w-0">
+            <h3 className="text-xs sm:text-sm font-bold tracking-wide text-gray-900 uppercase truncate">
               {title}
             </h3>
-            <p className="text-sm text-gray-600">{year}</p>
+            <p className="text-xs sm:text-sm text-gray-600">{year}</p>
           </div>
 
           {/* Right side - Location and Area */}
-          <div className="text-right space-y-1">
-            <p className="text-sm text-gray-600 uppercase">{location}</p>
-            <p className="text-sm text-gray-600">AREA {area} sqft</p>
+          <div className="text-right space-y-0.5 sm:space-y-1 flex-shrink-0">
+            <p className="text-[10px] sm:text-sm text-gray-600 uppercase">
+              {location}
+            </p>
+            <p className="text-[10px] sm:text-sm text-gray-600">
+              AREA {area} sqft
+            </p>
           </div>
         </div>
       </div>

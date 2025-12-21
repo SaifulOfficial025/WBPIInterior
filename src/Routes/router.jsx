@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import Home from "../Pages/Home/Home";
 import Team from "../Pages/OurTeam/RootPage";
 import Test from "../Pages/Test";
-import RootPageImageFrames from "../Pages/Projects/RootPageImageFrames";
+import RootPageProjects from "../Pages/Projects/RootPageProjects";
 
 export const router = createBrowserRouter([
   {
@@ -15,7 +15,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/projects",
-    element: <RootPageImageFrames />,
+    element: <RootPageProjects />,
   },
   {
     path: "/test",

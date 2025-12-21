@@ -60,7 +60,7 @@ const projectsData = [
   },
 ];
 
-function RootPageImageFrames() {
+function RootPageImageFrames({ onProjectClick }) {
   const [selectedCategory, setSelectedCategory] = useState("MIXED USE");
   const scrollContainerRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -130,8 +130,9 @@ function RootPageImageFrames() {
           {filteredProjects.map((project) => (
             <div
               key={project.id}
-              className="flex-shrink-0"
+              className="flex-shrink-0 cursor-pointer"
               style={{ width: "420px" }}
+              onClick={() => onProjectClick && onProjectClick(project)}
             >
               <FullImageSlidePhotoFrame
                 imgUrl={project.imgUrl}
