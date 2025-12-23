@@ -4,7 +4,7 @@ function Hero() {
   return (
     <div className="w-full bg-white">
       <div className="pt-4 pl-4 text-lg font-semibold tracking-wide">
-        SERVICES
+        <h2 className="text-2xl ml-2 font-bold tracking-widest ">SERVICES</h2>
       </div>
       <div className="w-full mt-2">
         <img

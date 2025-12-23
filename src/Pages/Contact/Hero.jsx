@@ -12,7 +12,7 @@ function Hero() {
     <div className="w-full bg-white text-gray-800 pt-4">
       {/* Title */}
       <div className="text-xl md:text-2xl font-semibold px-4 pt-2 pb-2">
-        CONTACT
+        <h2 className="text-2xl ml-2 font-bold tracking-widest ">CONTACT</h2>
       </div>
       {/* Main Image */}
       <div className="w-full flex justify-center items-center">
