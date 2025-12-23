@@ -63,10 +63,6 @@ function Cad3d() {
           />
         </div>
       </div>
-      {/* Bottom bar */}
-      <div className="w-full text-md text-black font-semibold border-b border-gray-400 py-2 px-4 md:px-0">
-        OUR PARTNERS SERVICES | DESIGN, FF&E, SPECIFIC FIT-OUT SERVICES
-      </div>
     </div>
   );
 }

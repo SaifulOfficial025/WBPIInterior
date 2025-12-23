@@ -58,20 +58,36 @@ const options = [
   ],
 ];
 
-function Options() {
+function Options({ fitoutRef, matterportRef, enlapsRef, partnerRef, pmcRef }) {
+  // Helper to scroll to ref
+  const handleScroll = (ref) => {
+    if (ref && ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
     <div className="w-full bg-white pb-8 mt-16">
       <div className="max-w-full mx-auto px-2 md:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 divide-y md:divide-y-0 md:divide-x">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 divide-y md:divide-y-0">
           {/* Left and Right Columns */}
           {options[0].map((_, colIdx) => (
             <div key={colIdx} className="flex flex-col divide-y">
               {options.map((row, rowIdx) => {
                 const opt = row[colIdx];
+                // Map option title to ref
+                let scrollRef = null;
+                if (opt.title === "FIT-OUT WORKS") scrollRef = fitoutRef;
+                if (opt.title === "MATTERPORT SCAN") scrollRef = matterportRef;
+                if (opt.title === "ENLAPS") scrollRef = enlapsRef;
+                if (opt.title === "OUR PARTNERS SERVICES")
+                  scrollRef = partnerRef;
+                if (opt.title === "3RD PARTY SERVICES") scrollRef = pmcRef;
                 return (
                   <div
                     key={opt.title}
-                    className="flex items-center justify-between py-3 group hover:bg-gray-50 transition"
+                    className="flex items-center justify-between py-3 group hover:bg-gray-50 transition cursor-pointer"
+                    onClick={() => scrollRef && handleScroll(scrollRef)}
                   >
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">

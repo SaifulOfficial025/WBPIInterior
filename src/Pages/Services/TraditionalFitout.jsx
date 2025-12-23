@@ -30,7 +30,7 @@ function TraditionalFitout() {
       </div>
 
       {/* Key benefits and image split */}
-      <div className="w-full flex flex-col md:flex-row bg-[#8B8987] mt-12  overflow-hidden shadow-lg">
+      <div className="w-full flex flex-col md:flex-row bg-[#7a797a] mt-12  overflow-hidden shadow-lg">
         {/* Left: Key Benefits */}
         <div className="w-full md:w-1/2 p-10 flex flex-col justify-center">
           <div className="text-white text-2xl font-semibold mb-6">

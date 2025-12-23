@@ -4,6 +4,8 @@ import Team from "../Pages/OurTeam/RootPage";
 import Test from "../Pages/Test";
 import RootPageProjects from "../Pages/Projects/RootPageProjects";
 import Services from "../Pages/Services/RootPage";
+import RootPageAbout from "../Pages/About/RootPage";
+import RootPageContact from "../Pages/Contact/RootPage";
 
 export const router = createBrowserRouter([
   {
@@ -21,6 +23,14 @@ export const router = createBrowserRouter([
   {
     path: "/services",
     element: <Services />,
+  },
+  {
+    path: "/about",
+    element: <RootPageAbout />,
+  },
+  {
+    path: "/contact",
+    element: <RootPageContact />,
   },
   {
     path: "/test",

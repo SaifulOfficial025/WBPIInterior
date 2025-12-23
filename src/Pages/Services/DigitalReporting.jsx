@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { FaArrowRightLong } from "react-icons/fa6";
+import ReportingToggle from "./ReportingToggle";
 
 function DigitalReporting() {
+  const [showToggle, setShowToggle] = useState(false);
   return (
     <div className="w-full bg-white text-gray-800  py-10 space-y-16">
       {/* Section 1: Digital Reporting & Transparency */}
@@ -25,16 +27,24 @@ function DigitalReporting() {
             always has complete visibility on progress, cost, and programme. Our
             reporting ecosystem includes:
           </div>
-          <div className="flex justify-end">
-            <button className="text-black text-base font-medium flex items-center gap-2 group hover:underline transition-all">
-              REPORTING DETAILS
-              <span className="ml-1 group-hover:translate-x-1 transition-transform">
-                <FaArrowRightLong />
-              </span>
-            </button>
-          </div>
         </div>
       </div>
+      <div className="flex justify-end">
+        <button
+          className="text-black text-base font-medium flex items-center gap-2 group hover:underline transition-all mr-24 -mt-16"
+          onClick={() => setShowToggle((v) => !v)}
+        >
+          REPORTING DETAILS
+          <span className="ml-1 group-hover:translate-x-1 transition-transform">
+            <FaArrowRightLong />
+          </span>
+        </button>
+      </div>
+      {showToggle && (
+        <div className="mt-8 w-full">
+          <ReportingToggle />
+        </div>
+      )}
 
       {/* Section 2: Scalable Delivery */}
       <div className="max-w-full mx-auto relative  overflow-hidden">

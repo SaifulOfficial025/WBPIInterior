@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import Header from "../../Shared/Header";
 import Hero from "./Hero";
 import Options from "./Options";
@@ -18,22 +18,44 @@ import CostConsultant from "./CostConsultant";
 import AllAdvantage from "./AllAdvantage";
 
 function RootPage() {
+  const fitoutRef = useRef(null);
+  const matterportRef = useRef(null);
+  const enlapsRef = useRef(null);
+  const partnerRef = useRef(null);
+  const pmcRef = useRef(null);
+
   return (
     <div>
       <Header />
       <Hero />
-      <Options />
-      <FitoutWorks />
+      <Options
+        fitoutRef={fitoutRef}
+        matterportRef={matterportRef}
+        enlapsRef={enlapsRef}
+        partnerRef={partnerRef}
+        pmcRef={pmcRef}
+      />
+      <div ref={fitoutRef}>
+        <FitoutWorks />
+      </div>
       <TraditionalFitout />
       <OurDelivery />
       <DigitalReporting />
       <ProvenRecord />
       <ContractType />
-      <Matterport />
-      <Enlaps />
+      <div ref={matterportRef}>
+        <Matterport />
+      </div>
+      <div ref={enlapsRef}>
+        <Enlaps />
+      </div>
       <Cad3d />
-      <OurPartner />
-      <PMC />
+      <div ref={partnerRef}>
+        <OurPartner />
+      </div>
+      <div ref={pmcRef}>
+        <PMC />
+      </div>
       <DnBEfficiency />
       <CostConsultant />
       <AllAdvantage />

@@ -18,7 +18,7 @@ function OurDelivery() {
       </div>
 
       {/* Middle: Gray Box with Team List */}
-      <div className="max-w-full mx-auto bg-[#8B8987]  p-8 md:p-10 mb-12">
+      <div className="max-w-full mx-auto bg-[#7a797a]  p-8 md:p-10 mb-12">
         <div className="text-gray-100 text-lg md:text-2xl font-light mb-4">
           We manage the entire delivery lifecycle through a fully integrated
           team that includes:
