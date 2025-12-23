@@ -3,6 +3,7 @@ import Home from "../Pages/Home/Home";
 import Team from "../Pages/OurTeam/RootPage";
 import Test from "../Pages/Test";
 import RootPageProjects from "../Pages/Projects/RootPageProjects";
+import Services from "../Pages/Services/RootPage";
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,10 @@ export const router = createBrowserRouter([
   {
     path: "/projects",
     element: <RootPageProjects />,
+  },
+  {
+    path: "/services",
+    element: <Services />,
   },
   {
     path: "/test",
