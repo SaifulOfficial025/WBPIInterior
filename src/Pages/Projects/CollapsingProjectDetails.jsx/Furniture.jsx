@@ -59,7 +59,7 @@ function Furniture() {
 
         {/* Row 4: details */}
         <div className="mt-6">
-          <img src="/threeline.png" alt="menu" className="w-6 h-6 mt-1 mb-3" />
+          {/* <img src="/threeline.png" alt="menu" className="w-6 h-6 mt-1 mb-3" /> */}
           <div className="flex items-start gap-3">
             <div>
               <div className="text-md text-gray-500 mt-1">

@@ -85,11 +85,11 @@ function RootPageImageFrames({ onProjectClick }) {
         selectedCategory={selectedCategory}
         onCategoryChange={setSelectedCategory}
       />
-      <div className="py-8 px-4">
+      <div className="py-4 sm:py-8 px-2 sm:px-4">
         {/* Horizontal scrollable container */}
         <div
           ref={scrollContainerRef}
-          className="flex gap-6 overflow-x-auto scrollbar-hide select-none"
+          className="flex gap-3 sm:gap-6 overflow-x-auto scrollbar-hide select-none"
           style={{
             cursor: "grab",
             scrollbarWidth: "none",
@@ -104,7 +104,7 @@ function RootPageImageFrames({ onProjectClick }) {
             <div
               key={project.id}
               className="flex-shrink-0 cursor-pointer"
-              style={{ width: "420px" }}
+              style={{ width: window.innerWidth < 640 ? "280px" : "420px" }}
               onClick={() => onProjectClick && onProjectClick(project)}
             >
               <FullImageSlidePhotoFrame

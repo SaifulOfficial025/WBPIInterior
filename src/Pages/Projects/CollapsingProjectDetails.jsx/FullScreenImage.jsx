@@ -122,12 +122,13 @@ function FullScreenImage({ imgUrl, onSeeDetails }) {
         ref={imageRef}
         src={imgUrl}
         alt="Full Screen"
-        className="h-full w-auto pointer-events-none"
+        className="h-full w-auto max-w-none pointer-events-none"
         style={{
           transform: `translateX(${imagePosition}px)`,
           transition: isDragging ? "none" : "transform 0.12s ease-out",
           objectFit: "contain",
           margin: "0 auto",
+          minWidth: "100%",
         }}
         onLoad={handleImageLoad}
         draggable={false}
@@ -136,7 +137,7 @@ function FullScreenImage({ imgUrl, onSeeDetails }) {
       {/* See Details Button */}
       <button
         onClick={onSeeDetails}
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 px-20 py-3 bg-[#ffffff] text-black text-xl font-semibold rounded-full hover:bg-[#f5eff2] transition-colors shadow-lg"
+        className="absolute bottom-3 sm:bottom-6 left-1/2 -translate-x-1/2 px-6 sm:px-20 py-2 sm:py-3 bg-[#ffffff] text-black text-base sm:text-xl font-semibold rounded-full hover:bg-[#f5eff2] transition-colors shadow-lg"
       >
         See Details
       </button>
