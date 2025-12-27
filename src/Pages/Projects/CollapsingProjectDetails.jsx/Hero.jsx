@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import CustomIndicator from "../Shared/CustomIndicator";
+import Photogallary from "./Photogallary";
 import { FaArrowLeft } from "react-icons/fa6";
 import { FaArrowRight } from "react-icons/fa6";
 
@@ -27,9 +28,10 @@ function Hero({
   onNextPage = () => {},
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [showGallery, setShowGallery] = useState(false);
 
   return (
-    <div className="w-full">
+    <div className="w-full mt-20">
       {/* Project Header Section */}
       <div className="py-6 sm:py-8 px-4 sm:px-6 lg:px-8 border-b border-gray-200">
         <div className="max-w-full mx-auto">
@@ -204,6 +206,20 @@ function Hero({
           </div>
         </div>
       </div>
+      <div className="flex justify-center mt-6">
+        <button
+          onClick={() => setShowGallery(true)}
+          className="px-20 py-3 bg-[#ffffff] text-black text-xl font-semibold rounded-full hover:bg-[#f5eff2] transition-colors shadow-lg"
+        >
+          See all photos
+        </button>
+      </div>
+
+      <Photogallary
+        open={showGallery}
+        onClose={() => setShowGallery(false)}
+        images={new Array(9).fill(imageSrc)}
+      />
     </div>
   );
 }

@@ -2,7 +2,7 @@ import React from "react";
 
 function PMC() {
   return (
-    <div className="w-full bg-white text-gray-800 px-0 md:px-0 py-0 mt-16 mb-16">
+    <div className="w-full bg-white text-gray-800 px-0 md:px-0 pt-10 ">
       <div className="w-full px-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 border-b border-gray-400 pt-2 pb-1 gap-2">
         <span className="font-semibold text-black text-md text-left md:text-base w-full md:w-auto">
           3RD PARTY SERVICES | INDEPENDENT PROJECT MANAGEMENT & COST CONTROL
@@ -10,7 +10,7 @@ function PMC() {
       </div>
 
       {/* Section 1: PMC & Cost Control */}
-      <div className="w-full flex flex-col md:flex-row items-stretch mt-16">
+      <div className="w-full flex flex-col md:flex-row items-stretch mt-16 mb-16">
         {/* Left: Image, flush to edge */}
         <div className="w-full md:w-1/2 h-[340px] md:h-[420px] lg:h-[480px]">
           <img
@@ -20,7 +20,7 @@ function PMC() {
           />
         </div>
         {/* Right: Text, flush to edge, white bg */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center bg-white px-6 ">
+        <div className="w-full md:w-1/2 flex flex-col justify-center bg-white px-6 ml-12 ">
           <div className="text-xl font-semibold mb-2">PMC & COST CONTROL</div>
           <div className="text-gray-700 text-xl font-light mb-4">
             While the Design & Build (D&B) model offers speed, integrated
@@ -51,9 +51,9 @@ function PMC() {
       </div>
 
       {/* Section 2: D&B Efficiency with Independent Client Protection */}
-      <div className="w-full flex flex-col md:flex-row items-stretch">
+      <div className="w-full flex flex-col md:flex-row items-stretch -mt-5 mb-16">
         {/* Left: Text, flush to edge, white bg */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center bg-white px-6 ">
+        <div className="w-full md:w-1/2 flex flex-col justify-center bg-white px-6 ml-12 ">
           <div className="text-2xl font-semibold mb-2">
             Combining D&amp;B Efficiency with Independent Client Protection
           </div>
@@ -106,7 +106,7 @@ function PMC() {
       </div>
 
       {/* Section 3: PMC or Cost Consultant Engagement */}
-      <div className="w-full flex flex-col md:flex-row items-stretch">
+      <div className="w-full flex flex-col md:flex-row items-stretch -mt-5 mb-16">
         {/* Left: Image, flush to edge */}
         <div className="w-full md:w-1/2 h-[340px] md:h-[420px] lg:h-[480px]">
           <img
@@ -116,7 +116,7 @@ function PMC() {
           />
         </div>
         {/* Right: Text, flush to edge, white bg */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center bg-white px-6 ">
+        <div className="w-full md:w-1/2 flex flex-col justify-center bg-white px-6 ml-12 ">
           <div className="text-2xl font-semibold mb-2">
             Any PMC or Cost Consultant we propose is engaged directly by the
             Client <br /> (not by us)
@@ -144,9 +144,9 @@ function PMC() {
       </div>
 
       {/* Section 4: Result - All Advantages of D&B, None of the Risks */}
-      <div className="w-full flex flex-col md:flex-row items-stretch">
+      <div className="w-full flex flex-col md:flex-row items-stretch -mt-5  ">
         {/* Left: Text, flush to edge, white bg */}
-        <div className="w-full md:w-1/2 flex flex-col justify-center bg-white px-6 ">
+        <div className="w-full md:w-1/2 flex flex-col justify-center bg-white px-6 ml-12 ">
           <div className="text-2xl font-semibold mb-2">
             Result: All Advantages of D&amp;B, None of the Risks
           </div>

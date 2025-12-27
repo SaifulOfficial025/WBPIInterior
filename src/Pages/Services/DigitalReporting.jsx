@@ -53,11 +53,11 @@ function DigitalReporting() {
           alt="Scalable Delivery"
           className="w-full h-auto object-cover min-h-[180px]"
         />
-        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8">
-          <div className="text-white text-base md:text-2xl font-semibold mb-2">
+        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-8 mb-2">
+          <div className="text-white text-base md:text-2xl font-semibold mb-2 ml-8">
             SCALABLE DELIVERY FOR ANY PROJECT SIZE
           </div>
-          <div className="text-gray-200 text-sm md:text-2xl font-light max-w-5xl">
+          <div className="text-gray-200 text-sm md:text-2xl font-light max-w-5xl ml-8">
             Our scalable delivery model allows us to efficiently manage
             everything from boutique fit-outs to complex, large-scale commercial
             projects. With a streamlined structure and robust partner network,

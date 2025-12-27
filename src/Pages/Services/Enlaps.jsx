@@ -2,9 +2,9 @@ import React from "react";
 
 function Enlaps() {
   return (
-    <div className="w-full bg-white text-gray-800 px-0 md:px-0 py-0 mt-16">
+    <div className="w-full bg-white text-gray-800 px-0 md:px-0 py-0 ">
       {/* Top: Title and description */}
-      <div className="max-w-full mx-16 pt-8 pb-2 px-4 md:px-0">
+      <div className="max-w-full mx-16 pt-16 pb-2 px-4 md:px-0 ">
         <div className="text-md text-black font-semibold tracking-wide mb-2 border-b border-gray-300 pb-1">
           ENLAPS | TIMELAPSE/HYPERLAPSE | CAPTURE DEVELOPMENT OF YOUR VISION
         </div>
@@ -29,7 +29,7 @@ function Enlaps() {
           </div>
           {/* Right: Gray box */}
           <div className="flex-1 min-w-0 flex md:justify-end mt-10">
-            <div className="bg-[#767374] text-gray-100 text-xl font-light  p-6 max-w-md w-full md:w-[540px]">
+            <div className="bg-black/50 text-gray-100 text-xl font-light  p-10 max-w-md w-full md:w-[540px]">
               Enlaps adds a new dimension to project reporting by transforming
               construction activity into clear, engaging visuals, sites,
               enhancing transparency, strengthening accountability, and creating

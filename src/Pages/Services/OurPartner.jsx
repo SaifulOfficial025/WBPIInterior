@@ -2,10 +2,10 @@ import React from "react";
 
 function OurPartner() {
   return (
-    <div className="w-full bg-white text-gray-800 px-0 md:px-0 py-0">
+    <div className="w-full bg-black/50 text-gray-800 px-0 md:px-0 py-0">
       {/* Bottom bar */}
 
-      <div className="w-full px-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 border-b border-gray-400 pt-2 pb-1 gap-2">
+      <div className="bg-white w-full px-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 border-b border-gray-400 pt-2 pb-1 gap-2">
         <span className="font-semibold text-black text-md text-left md:text-base w-full md:w-auto">
           OUR PARTNERS SERVICES | DESIGN, FF&E, SPECIFIC FIT-OUT SERVICES
         </span>
@@ -14,7 +14,7 @@ function OurPartner() {
       {/* Top: Gray info box and right-aligned list */}
       <div className="w-full flex flex-col md:flex-row justify-between items-start gap-8 px-4 md:px-0 pt-8">
         {/* Left: Gray info box */}
-        <div className="bg-[#7a797a] text-white  p-8 md:p-12 flex-1 min-w-[320px] max-w-5xl">
+        <div className=" text-white  p-8 md:p-12 flex-1 min-w-[320px] max-w-5xl">
           <div className="text-2xl font-semibold mb-4">
             OUR PARTNERS SERVICES
           </div>
@@ -29,13 +29,13 @@ function OurPartner() {
         </div>
         {/* Right: List */}
         <div className="flex flex-col items-start md:items-left justify-start pt-8 md:pt-0 pr-0 md:pr-12 min-w-[420px] mt-16 mr-24">
-          <div className="text-black text-xl font-normal mb-2">
+          <div className="text-white text-xl font-normal mb-2">
             DESIGN CONSULTANCY
           </div>
-          <div className="text-black text-xl font-normal mb-2">
+          <div className="text-white text-xl font-normal mb-2">
             FF&E CONSULTANCY
           </div>
-          <div className="text-black text-xl  font-normal">
+          <div className="text-white text-xl  font-normal">
             SPECIALIZED FIT-OUT PARTNERS
           </div>
         </div>

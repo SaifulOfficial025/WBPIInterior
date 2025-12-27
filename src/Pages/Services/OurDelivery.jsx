@@ -2,11 +2,13 @@ import React from "react";
 
 function OurDelivery() {
   return (
-    <div className="w-full bg-white text-gray-800  py-10">
+    <div className="w-full bg-transparent text-gray-800  ">
       {/* Top: Our Delivery Title and Description */}
-      <div className="max-w-full mx-16">
-        <div className="text-lg md:text-2xl font-normal mb-2">OUR DELIVERY</div>
-        <div className="text-gray-600 text-xl md:text-xl font-light mb-10 max-w-6xl">
+      <div className="max-w-full  bg-white ">
+        <div className="text-lg md:text-2xl font-normal mb-2 mx-16 pt-10">
+          OUR DELIVERY
+        </div>
+        <div className="text-gray-600 text-xl md:text-xl font-light pb-10 max-w-6xl mx-16">
           Our Fit-Out delivery is built around a high-performance in-house team,
           long-term partnerships, a rigorously vetted supply chain, and a
           real-time reporting structure that ensures complete transparency from
@@ -18,12 +20,12 @@ function OurDelivery() {
       </div>
 
       {/* Middle: Gray Box with Team List */}
-      <div className="max-w-full mx-auto bg-[#7a797a]  p-8 md:p-10 mb-12">
-        <div className="text-gray-100 text-lg md:text-2xl font-light mb-4">
+      <div className="max-w-full mx-auto bg-black/50  p-8 md:p-10">
+        <div className="text-gray-100 text-lg md:text-2xl font-light mb-4 ml-8">
           We manage the entire delivery lifecycle through a fully integrated
           team that includes:
         </div>
-        <ul className="text-gray-200 text-base md:text-xl font-light list-disc list-inside space-y-1 mb-4">
+        <ul className="text-gray-200 text-base md:text-xl font-light list-disc list-inside space-y-1 mb-4 ml-8">
           <li>Project Managers</li>
           <li>Construction Managers</li>
           <li>Site Engineers &amp; Foremen</li>
@@ -32,7 +34,7 @@ function OurDelivery() {
           <li>MEP Managers &amp; Technical Engineers</li>
           <li>Estimation, Commercial &amp; Procurement Specialists</li>
         </ul>
-        <div className="text-gray-300 text-md md:text-xl font-light">
+        <div className="text-gray-300 text-md md:text-xl font-light ml-8">
           This structured team ensures seamless coordination of complex scopes,
           proactive issue identification, and delivery to the highest standard
           of technical compliance and finish quality.
@@ -40,9 +42,9 @@ function OurDelivery() {
       </div>
 
       {/* Bottom: Two-column section with left text and right image */}
-      <div className="max-w-full mx-16 flex flex-col md:flex-row  items-start">
+      <div className="max-w-full  flex flex-col md:flex-row  items-start bg-white">
         {/* Left: Text Content */}
-        <div className="flex-1 min-w-0">
+        <div className="flex-1 min-w-0 mx-16 mb-10 md:mb-0 md:mr-10 mt-16">
           {/* Trusted Network Section */}
           <div className="mb-8">
             <div className="font-semibold text-base md:text-xl mb-2 tracking-tight uppercase">
@@ -93,7 +95,7 @@ function OurDelivery() {
           </div>
         </div>
         {/* Right: Image */}
-        <div className="flex-1 min-w-0 flex justify-center items-start">
+        <div className="flex-1 min-w-0 flex justify-center items-start mt-16">
           <img
             src="/ourdelivery.png"
             alt="Our Delivery Partnerships"

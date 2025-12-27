@@ -2,7 +2,7 @@ import React from "react";
 
 function Hero() {
   return (
-    <div className="w-full bg-white text-gray-800">
+    <div className="w-full bg-white text-gray-800 mt-20">
       {/* Top: About Us section */}
       <div className="max-w-full mx-auto px-4 md:px-0 pt-8 pb-2">
         <div className="text-3xl font-semibold mb-6 mx-6">ABOUT US</div>
@@ -37,7 +37,7 @@ function Hero() {
           </div>
           {/* Right: Gray box */}
           <div className="flex-1 min-w-0 flex md:justify-start ">
-            <div className="bg-[#777472] text-white text-xl font-light  p-8 max-w-2xl w-full md:w-[640px] max-h-[400px] flex items-center">
+            <div className="bg-[#777472] text-white text-xl font-light  p-16 max-w-2xl w-full md:w-[640px] max-h-[400px] flex items-center">
               Our approach is built on structure, clarity, and accountability.
               Every project is executed with a methodical mindset, supported by
               strong leadership, strategic planning, and rigorous quality

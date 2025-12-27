@@ -1,5 +1,4 @@
 import React, { useRef, useState, useEffect } from "react";
-import { FaArrowRightArrowLeft } from "react-icons/fa6";
 
 function FullImageSlidePhotoFrame({
   imgUrl,
@@ -11,12 +10,11 @@ function FullImageSlidePhotoFrame({
 }) {
   const containerRef = useRef(null);
   const imageRef = useRef(null);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [scrollLeft, setScrollLeft] = useState(0);
   const [imagePosition, setImagePosition] = useState(0);
   const [maxScroll, setMaxScroll] = useState(0);
   const [isColored, setIsColored] = useState(false);
+  const animationFrameRef = useRef(null);
+  const startTimeRef = useRef(null);
 
   // Calculate max scroll when image loads
   const handleImageLoad = () => {
@@ -42,78 +40,57 @@ function FullImageSlidePhotoFrame({
     }
   };
 
-  // Mouse events
-  const handleMouseDown = (e) => {
-    e.stopPropagation();
-    setIsDragging(true);
+  // Auto-pan animation on hover
+  const animatePan = () => {
+    const phase1Start = -maxScroll; // Start at right
+    const phase1End = 0; // Pan to left
+    const phase2Start = 0; // Start from left
+    const phase2End = -maxScroll; // Pan to right
+    const phaseDuration = 3000; // 3 seconds each phase
+    startTimeRef.current = Date.now();
+
+    const animate = () => {
+      const elapsed = Date.now() - startTimeRef.current;
+
+      // Phase 1: Right to Left (0 to 2000ms)
+      if (elapsed < phaseDuration) {
+        const progress = elapsed / phaseDuration;
+        const newPosition = phase1Start + (phase1End - phase1Start) * progress;
+        setImagePosition(newPosition);
+        animationFrameRef.current = requestAnimationFrame(animate);
+      }
+      // Phase 2: Left to Right (2000ms to 4000ms)
+      else if (elapsed < phaseDuration * 2) {
+        const progress = (elapsed - phaseDuration) / phaseDuration;
+        const newPosition = phase2Start + (phase2End - phase2Start) * progress;
+        setImagePosition(newPosition);
+        animationFrameRef.current = requestAnimationFrame(animate);
+      }
+      // Animation complete - stop
+      else {
+        setImagePosition(phase2End);
+      }
+    };
+
+    animationFrameRef.current = requestAnimationFrame(animate);
+  };
+
+  const handleMouseEnter = () => {
     setIsColored(true);
-    setStartX(e.pageX);
-    setScrollLeft(imagePosition);
-    containerRef.current.style.cursor = "grabbing";
-  };
-
-  const handleMouseMove = (e) => {
-    if (!isDragging) return;
-    e.preventDefault();
-    e.stopPropagation();
-    const x = e.pageX;
-    const walk = x - startX;
-    let newPosition = scrollLeft + walk;
-
-    // Clamp the position - ensure image edges never go past container edges
     if (maxScroll > 0) {
-      newPosition = Math.min(0, Math.max(-maxScroll, newPosition));
-    } else {
-      newPosition = 0;
-    }
-    setImagePosition(newPosition);
-  };
-
-  const handleMouseUp = (e) => {
-    e.stopPropagation();
-    setIsDragging(false);
-    if (containerRef.current) {
-      containerRef.current.style.cursor = "grab";
+      // Cancel any ongoing animation
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
+      animatePan();
     }
   };
 
   const handleMouseLeave = () => {
-    if (isDragging) {
-      setIsDragging(false);
-      if (containerRef.current) {
-        containerRef.current.style.cursor = "grab";
-      }
+    setIsColored(false);
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
     }
-  };
-
-  // Touch events
-  const handleTouchStart = (e) => {
-    e.stopPropagation();
-    setIsDragging(true);
-    setIsColored(true);
-    setStartX(e.touches[0].pageX);
-    setScrollLeft(imagePosition);
-  };
-
-  const handleTouchMove = (e) => {
-    if (!isDragging) return;
-    e.stopPropagation();
-    const x = e.touches[0].pageX;
-    const walk = x - startX;
-    let newPosition = scrollLeft + walk;
-
-    // Clamp the position - ensure image edges never go past container edges
-    if (maxScroll > 0) {
-      newPosition = Math.min(0, Math.max(-maxScroll, newPosition));
-    } else {
-      newPosition = 0;
-    }
-    setImagePosition(newPosition);
-  };
-
-  const handleTouchEnd = (e) => {
-    e.stopPropagation();
-    setIsDragging(false);
   };
 
   // Recalculate on window resize
@@ -144,17 +121,13 @@ function FullImageSlidePhotoFrame({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Turn image back to B&W when clicking/tapping outside the frame
+  // Cleanup animation on unmount
   useEffect(() => {
-    const onDocPointer = (e) => {
-      if (!containerRef.current) return;
-      if (!containerRef.current.contains(e.target)) {
-        setIsColored(false);
+    return () => {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
       }
     };
-
-    document.addEventListener("pointerdown", onDocPointer);
-    return () => document.removeEventListener("pointerdown", onDocPointer);
   }, []);
 
   return (
@@ -165,15 +138,10 @@ function FullImageSlidePhotoFrame({
         className="relative w-full overflow-hidden bg-gray-100"
         style={{
           aspectRatio: "4/5",
-          cursor: "grab",
+          cursor: "pointer",
         }}
-        onMouseDown={handleMouseDown}
-        onMouseMove={handleMouseMove}
-        onMouseUp={handleMouseUp}
+        onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
       >
         <img
           ref={imageRef}
@@ -182,9 +150,7 @@ function FullImageSlidePhotoFrame({
           className="h-full w-auto max-w-none pointer-events-none"
           style={{
             transform: `translateX(${imagePosition}px)`,
-            transition: isDragging
-              ? "none"
-              : "transform 0.12s ease-out, filter 180ms ease",
+            transition: "filter 180ms ease",
             filter: isColored ? "none" : "grayscale(100%)",
             objectFit: "contain",
           }}
@@ -192,10 +158,9 @@ function FullImageSlidePhotoFrame({
           draggable={false}
         />
 
-        {/* Drag indicator overlay */}
+        {/* Hover indicator overlay */}
         <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 bg-black/40 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full text-white text-[10px] sm:text-xs backdrop-blur-sm">
-          <FaArrowRightArrowLeft className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-          <span>Drag to explore</span>
+          <span>Hover to explore</span>
         </div>
       </div>
 

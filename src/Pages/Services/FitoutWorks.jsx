@@ -2,19 +2,21 @@ import React from "react";
 
 function FitoutWorks() {
   return (
-    <div className="w-full bg-white text-gray-800">
+    <div className="w-full bg-black/50 text-gray-800">
       {/* Header */}
-      <div className="max-w-full mx-auto px-4 pt-6">
-        <h2 className="text-xl font-semibold tracking-wide">FIT-OUT WORKS</h2>
-        <p className="text-md text-gray-400 mt-2">
+      <div className="max-w-full mx-auto px-4 pt-6 bg-white">
+        <h2 className="text-xl font-semibold tracking-wide text-gray-900">
+          FIT-OUT WORKS
+        </h2>
+        <p className="text-md text-gray-600 mt-2">
           CONTRACTOR MANAGEMENT, PROCUREMENT, REPORTING ..
         </p>
       </div>
 
-      {/* Top split: left text block (gray) and right image */}
-      <div className="max-w-full mx-auto px-4 mt-6 grid grid-cols-1 md:grid-cols-2 items-stretch ">
-        <div className="bg-[#7a797a] text-white p-8 flex items-center">
-          <div className="prose prose-md text-white text-2xl max-w-2xl font-light">
+      {/* Top split: left text block (transparent to show hero) and right image */}
+      <div className="max-w-full mx-auto px-4 mt-6 grid grid-cols-1 md:grid-cols-2 items-stretch bg-transparent">
+        <div className="bg-transparent text-white p-8 flex items-center">
+          <div className="prose prose-md text-white text-2xl max-w-2xl font-light ml-10">
             <p>
               We offer a structured delivery model that, depending on the
               client’s preferred approach and the stage at which we are engaged,
@@ -45,18 +47,18 @@ function FitoutWorks() {
           <img
             src="/fitout1.png"
             alt="Fitout 1"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover shadow-lg"
           />
         </div>
       </div>
 
       {/* Middle: badge + paragraphs */}
-      <div className="max-w-9xl mx-16 px-4 mt-10">
-        <div className="inline-block bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-md font-medium">
+      <div className="max-w-full mx-auto px-4 mt-10 bg-white py-6 pb-16">
+        <div className="inline-block bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-md font-medium mx-16">
           DESIGN & FIT-OUT
         </div>
 
-        <div className="mt-6 text-xl text-gray-600 leading-relaxed font-light">
+        <div className="mt-6 text-xl text-gray-600 leading-relaxed font-light mx-16">
           <p className="mb-4">
             <span className="font-semibold">
               Our core delivery model is a Fast Track Design & Fit-Out approach
@@ -101,15 +103,15 @@ function FitoutWorks() {
       </div>
 
       {/* Bottom: image left, key benefits right */}
-      <div className="max-w-full mx-auto px-4 mt-10 grid grid-cols-1 md:grid-cols-2  items-stretch">
+      <div className="max-w-full mx-auto px-4 mt-10 grid grid-cols-1 md:grid-cols-2 items-stretch bg-transparent">
         <div>
           <img
             src="/fitout2.png"
             alt="Fitout 2"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover shadow-lg"
           />
         </div>
-        <div className="bg-[#7a797a] text-gray-200 p-8 flex flex-col ">
+        <div className="bg-transparent text-gray-200 p-8 flex flex-col ml-16">
           <h3 className="font-semibold text-2xl mt-28">KEY BENEFITS</h3>
           <ul className="mt-4 list-disc list-inside text-2xl space-y-2 opacity-90 font-light ">
             <li>Single point of accountability from design to delivery</li>

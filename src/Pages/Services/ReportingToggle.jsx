@@ -8,7 +8,7 @@ function ReportingToggle() {
       </span>
       <div className="max-w-full mx-16 grid grid-cols-1 md:grid-cols-5 gap-6 mt-16">
         {/* Row 1 */}
-        <div className="bg-[#7a797a] text-white p-8 flex flex-col justify-center min-h-[200px] md:col-span-3">
+        <div className="bg-[#7a797a] text-white p-8 flex flex-col justify-center min-h-[200px] md:col-span-3 pl-16">
           <div className="text-xl font-semibold mb-2">
             ONLINE DASHBOARDS (CUSTOMIZED FOR EACH PROJECT)
           </div>
@@ -36,7 +36,7 @@ function ReportingToggle() {
             className="object-cover w-full h-full rounded"
           />
         </div>
-        <div className="bg-[#7a797a] text-white p-8 flex flex-col justify-center min-h-[200px] md:col-span-3">
+        <div className="bg-[#7a797a] text-white p-8 flex flex-col justify-center min-h-[200px] md:col-span-3 pl-16">
           <div className="text-xl font-semibold mb-2">
             DETAILED CONSTRUCTION PROGRAMMES
           </div>
@@ -50,7 +50,7 @@ function ReportingToggle() {
         </div>
 
         {/* Row 3 */}
-        <div className="bg-[#7a797a] text-white p-8 flex flex-col justify-center min-h-[200px] md:col-span-3">
+        <div className="bg-[#7a797a] text-white p-8 flex flex-col justify-center min-h-[200px] md:col-span-3 pl-16">
           <div className="text-xl font-semibold mb-2">
             WEEKLY MINUTES OF MEETING (MOMS)
           </div>
@@ -78,7 +78,7 @@ function ReportingToggle() {
             className="object-cover w-full h-full rounded"
           />
         </div>
-        <div className="bg-[#7a797a] text-white p-8 flex flex-col justify-center min-h-[200px] md:col-span-3">
+        <div className="bg-[#7a797a] text-white p-8 flex flex-col justify-center min-h-[200px] md:col-span-3 pl-16">
           <div className="text-xl font-semibold mb-2">
             MATTERPORT 360° SCANNING
           </div>

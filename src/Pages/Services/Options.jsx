@@ -67,7 +67,7 @@ function Options({ fitoutRef, matterportRef, enlapsRef, partnerRef, pmcRef }) {
   };
 
   return (
-    <div className="w-full bg-white pb-8 mt-16">
+    <div className="w-full bg-white pb-8 -mt-60">
       <div className="max-w-full mx-auto px-2 md:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 divide-y md:divide-y-0">
           {/* Left and Right Columns */}

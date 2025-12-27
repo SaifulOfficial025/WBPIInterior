@@ -2,10 +2,10 @@ import React from "react";
 
 function Cad3d() {
   return (
-    <div className="w-full bg-white text-gray-800 px-0 md:px-0 py-0 mt-16">
+    <div className="w-full bg-white text-gray-800 px-0 md:px-0 py-0">
       {/* Top bar */}
-      <div className="w-full px-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 border-b border-gray-400 pt-2 pb-1 gap-2">
-        <span className="font-semibold text-black text-md text-left md:text-base w-full md:w-auto">
+      <div className="pt-16 w-full px-4 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 border-b border-gray-400 pt-2 pb-1 gap-2 ">
+        <span className="font-semibold text-black text-md text-left md:text-base w-full md:w-auto ">
           TECHNICAL DRAFTING & VISUALIZATIONS | STANDARDIZED QUALITY OF
           TECHNICAL DESIGN AND VISUALIZE YOUR CREATION.
         </span>
@@ -31,7 +31,7 @@ function Cad3d() {
             </div>
           </div>
           {/* Gray info box */}
-          <div className="bg-[#767374] text-gray-100 text-xl font-light rounded-md p-4 max-w-lg mb-2 mx-auto">
+          <div className="bg-[#767374] text-gray-100 text-xl font-light  p-8 max-w-lg mb-2 mx-auto">
             We support design partners with in-house drafting services to
             deliver fully standardized, execution-ready documentation. This
             ensures all drawings meet the same level of detail, formatting, and

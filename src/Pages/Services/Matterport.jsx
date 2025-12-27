@@ -2,10 +2,10 @@ import React from "react";
 
 function Matterport() {
   return (
-    <div className="w-full bg-white text-gray-800 px-0 md:px-0 py-0">
+    <div className="w-full bg-black/50 text-gray-800 px-0 md:px-0 py-0">
       <div className="w-full flex flex-col md:flex-row min-h-[420px]">
         {/* Left: Gray panel with text and QR */}
-        <div className="w-full md:w-1/2 bg-[#767374] text-white flex flex-col justify-between p-8 md:p-12 lg:p-16">
+        <div className="w-full md:w-1/2 text-white flex flex-col justify-between p-8 md:p-12 lg:p-16">
           <div>
             <div className="text-2xl font-normal mb-6">
               MATTERPORT TECHNOLOGY

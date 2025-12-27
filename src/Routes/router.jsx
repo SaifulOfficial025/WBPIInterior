@@ -33,6 +33,10 @@ export const router = createBrowserRouter([
     element: <RootPageContact />,
   },
   {
+    path: "/live",
+    element: "Live Page Under Construction",
+  },
+  {
     path: "/test",
     element: <Test />,
   },

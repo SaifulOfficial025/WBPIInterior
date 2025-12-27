@@ -31,33 +31,6 @@ const projectsData = [
     area: "25,000",
     category: "RESIDENTIAL",
   },
-  {
-    id: 4,
-    imgUrl: "/PropertyFinder.png",
-    title: "PROPERTY FINDER",
-    location: "MEDIA CITY, DUBAI, UAE",
-    year: "2025",
-    area: "2,658",
-    category: "HOSPITALITY",
-  },
-  {
-    id: 5,
-    imgUrl: "/InvestmentOffice.png",
-    title: "FRONDS INVESTMENT OFFICE",
-    location: "52 ROAD, DUBAI, UAE",
-    year: "2025",
-    area: "5,200",
-    category: "COMMERCIAL",
-  },
-  {
-    id: 6,
-    imgUrl: "/PetrochemOffice.png",
-    title: "PETROCHEM OFFICE",
-    location: "JAFZA, DUBAI, UAE",
-    year: "2025",
-    area: "25,000",
-    category: "RESIDENTIAL",
-  },
 ];
 
 function RootPageImageFrames({ onProjectClick }) {

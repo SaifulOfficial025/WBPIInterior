@@ -7,8 +7,8 @@ function Hero() {
   const [open, setOpen] = useState(false);
 
   return (
-    <section className="overflow-hidden">
-      <h2 className="text-2xl ml-6 font-bold tracking-widest z-40">OUR TEAM</h2>
+    <section className="overflow-hidden mt-20">
+      <div className="text-3xl font-semibold mb-6 mx-6">OUR TEAM</div>
 
       <div className="flex flex-col md:flex-row w-full h-[940px]">
         {/* Left: Single image with both people, names, and info */}

@@ -25,40 +25,42 @@ function RootPage() {
   const pmcRef = useRef(null);
 
   return (
-    <div>
+    <div className="relative">
       <Header />
       <Hero />
-      <Options
-        fitoutRef={fitoutRef}
-        matterportRef={matterportRef}
-        enlapsRef={enlapsRef}
-        partnerRef={partnerRef}
-        pmcRef={pmcRef}
-      />
-      <div ref={fitoutRef}>
-        <FitoutWorks />
+      <div className="relative z-10">
+        <Options
+          fitoutRef={fitoutRef}
+          matterportRef={matterportRef}
+          enlapsRef={enlapsRef}
+          partnerRef={partnerRef}
+          pmcRef={pmcRef}
+        />
+        <div ref={fitoutRef}>
+          <FitoutWorks />
+        </div>
+        <TraditionalFitout />
+        <OurDelivery />
+        <DigitalReporting />
+        <ProvenRecord />
+        <ContractType />
+        <div ref={matterportRef}>
+          <Matterport />
+        </div>
+        <div ref={enlapsRef}>
+          <Enlaps />
+        </div>
+        <Cad3d />
+        <div ref={partnerRef}>
+          <OurPartner />
+        </div>
+        <div ref={pmcRef}>
+          <PMC />
+        </div>
+        <DnBEfficiency />
+        <CostConsultant />
+        <AllAdvantage />
       </div>
-      <TraditionalFitout />
-      <OurDelivery />
-      <DigitalReporting />
-      <ProvenRecord />
-      <ContractType />
-      <div ref={matterportRef}>
-        <Matterport />
-      </div>
-      <div ref={enlapsRef}>
-        <Enlaps />
-      </div>
-      <Cad3d />
-      <div ref={partnerRef}>
-        <OurPartner />
-      </div>
-      <div ref={pmcRef}>
-        <PMC />
-      </div>
-      <DnBEfficiency />
-      <CostConsultant />
-      <AllAdvantage />
     </div>
   );
 }
