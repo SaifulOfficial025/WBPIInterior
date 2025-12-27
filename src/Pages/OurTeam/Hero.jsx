@@ -24,7 +24,7 @@ function Hero() {
 
         {/* Right: Founders text and toggle */}
         <aside className="w-full md:w-1/2 h-auto md:h-[840px] flex flex-col justify-center px-4 sm:px-8 py-6 sm:py-8">
-          <div className="w-full h-[400px] sm:h-[500px] md:w-[600px] md:h-[840px] bg-cover mb-4 sm:mb-6 md:ml-52">
+          <div className="w-full h-[500px] sm:h-[500px] md:w-[600px] md:h-[840px] bg-cover mb-4 sm:mb-6 md:ml-52">
             <img
               src="/teamrightsideimage.png"
               alt="Team"
