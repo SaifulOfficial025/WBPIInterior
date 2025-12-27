@@ -95,11 +95,11 @@ function OurDelivery() {
           </div>
         </div>
         {/* Right: Image */}
-        <div className="flex-1 min-w-0 flex justify-center items-start mt-16 sm:mt-16 mt-8">
+        <div className="flex-1 min-w-0 flex justify-center items-start mt-8 sm:mt-16 px-4 sm:px-0">
           <img
             src="/ourdelivery.png"
             alt="Our Delivery Partnerships"
-            className="object-cover w-full max-w-[400px] md:max-w-[420px] lg:max-w-[480px] h-auto shadow-md justify-end items-end"
+            className="object-cover w-full max-w-[280px] sm:max-w-[400px] md:max-w-[420px] lg:max-w-[480px] h-auto shadow-md"
           />
         </div>
       </div>

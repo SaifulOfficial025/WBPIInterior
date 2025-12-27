@@ -6,6 +6,7 @@ import RootPageProjects from "../Pages/Projects/RootPageProjects";
 import Services from "../Pages/Services/RootPage";
 import RootPageAbout from "../Pages/About/RootPage";
 import RootPageContact from "../Pages/Contact/RootPage";
+import LiveRootPage from "../Pages/Live/RootPage";
 
 export const router = createBrowserRouter([
   {
@@ -34,7 +35,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/live",
-    element: "Live Page Under Construction",
+    element: <LiveRootPage />,
   },
   {
     path: "/test",
