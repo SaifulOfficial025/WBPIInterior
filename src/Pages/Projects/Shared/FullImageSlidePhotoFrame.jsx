@@ -46,7 +46,7 @@ function FullImageSlidePhotoFrame({
     const phase1End = 0; // Pan to left
     const phase2Start = 0; // Start from left
     const phase2End = -maxScroll; // Pan to right
-    const phaseDuration = 3000; // 3 seconds each phase
+    const phaseDuration = 6000; // 6 seconds each phase
     startTimeRef.current = Date.now();
 
     const animate = () => {

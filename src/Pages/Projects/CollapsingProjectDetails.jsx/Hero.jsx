@@ -26,9 +26,16 @@ function Hero({
   totalPages = 5,
   onPrevPage = () => {},
   onNextPage = () => {},
+  galleryImages = [],
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
+
+  // Use gallery images if available, otherwise fallback to imageSrc
+  const photosForGallery =
+    galleryImages.length > 0
+      ? galleryImages.map((img) => img.image)
+      : new Array(9).fill(imageSrc);
 
   return (
     <div className="w-full mt-8 sm:mt-20">
@@ -105,7 +112,10 @@ function Hero({
       <div className="py-6 sm:py-8 lg:py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-full mx-auto grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8 lg:gap-12">
           {/* Left: Image */}
-          <div className="flex items-center justify-center bg-gray-100 overflow-hidden min-h-[280px] sm:min-h-[400px] lg:min-h-[600px]">
+          <div
+            onClick={() => setShowGallery(true)}
+            className="relative flex items-center justify-center bg-gray-100 overflow-hidden min-h-[280px] sm:min-h-[400px] lg:min-h-[600px] cursor-pointer group"
+          >
             <img
               src={imageSrc}
               alt={projectTitle}
@@ -114,6 +124,11 @@ function Hero({
                 imageLoaded ? "opacity-100" : "opacity-0"
               }`}
             />
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+              <p className="text-white text-lg sm:text-xl font-semibold opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                Click to view all photos
+              </p>
+            </div>
           </div>
 
           {/* Right: Details */}
@@ -206,23 +221,16 @@ function Hero({
                   className="justify-center"
                 />
               </div>
+              <span className="flex justify-center mt-2">Projects</span>
             </div>
           </div>
         </div>
-      </div>
-      <div className="flex justify-center mt-4 sm:mt-6">
-        <button
-          onClick={() => setShowGallery(true)}
-          className="px-6 sm:px-20 py-2 sm:py-3 bg-[#ffffff] text-black text-sm sm:text-xl font-semibold rounded-full hover:bg-[#f5eff2] transition-colors shadow-lg"
-        >
-          See all photos
-        </button>
       </div>
 
       <Photogallary
         open={showGallery}
         onClose={() => setShowGallery(false)}
-        images={new Array(9).fill(imageSrc)}
+        images={photosForGallery}
       />
     </div>
   );

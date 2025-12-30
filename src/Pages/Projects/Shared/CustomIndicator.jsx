@@ -7,15 +7,22 @@ function CustomIndicator({
   onNext = () => {},
   className = "",
 }) {
-  const indicatorWidth = 64; // px, fixed bold segment width
   const trackRef = useRef(null);
   const [leftPx, setLeftPx] = useState(0);
+  const [indicatorWidth, setIndicatorWidth] = useState(64);
 
   const updatePosition = () => {
     const track = trackRef.current;
     if (!track) return;
     const w = track.clientWidth;
-    const avail = Math.max(0, w - indicatorWidth);
+
+    // Calculate dynamic width based on 1/total ratio (each segment represents one project)
+    const segmentWidth = total > 0 ? w / total : w;
+    const dynamicWidth = Math.max(32, Math.min(w * 0.3, segmentWidth)); // min 32px, max 30% of track
+    setIndicatorWidth(dynamicWidth);
+
+    // Calculate position: move the bar based on current project
+    const avail = Math.max(0, w - dynamicWidth);
     const normalized = total > 1 ? (current - 1) / (total - 1) : 0;
     const pct = Math.max(0, Math.min(1, normalized));
     setLeftPx(Math.round(pct * avail));
@@ -46,7 +53,7 @@ function CustomIndicator({
         {/* thin background line */}
         <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 h-px bg-gray-300" />
 
-        {/* bold moving segment (leftPx controls left position) */}
+        {/* bold moving segment - moves horizontally, width represents 1 project */}
         <div
           className="absolute bg-gray-800 rounded-sm"
           style={{
@@ -55,7 +62,7 @@ function CustomIndicator({
             height: 4,
             top: "50%",
             transform: "translateY(-50%)",
-            transition: "left 260ms ease",
+            transition: "left 260ms ease, width 260ms ease",
           }}
           aria-hidden
         />

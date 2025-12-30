@@ -81,9 +81,12 @@ function Photogallary({ images, open, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center"
+      style={{ margin: 0, padding: 0, top: 0, left: 0, right: 0, bottom: 0 }}
+    >
       {/* click overlay to close */}
-      <div className="absolute inset-0 bg-black/40" onClick={close} />
+      <div className="absolute inset-0 bg-black/60" onClick={close} />
 
       {/* blurred background grid of all photos (decorative) */}
       <div className="pointer-events-none absolute inset-0 p-8">
@@ -101,7 +104,7 @@ function Photogallary({ images, open, onClose }) {
       </div>
 
       {/* modal content */}
-      <div className="relative w-[90vw] max-w-6xl max-h-[90vh] bg-white rounded-lg shadow-lg overflow-hidden">
+      <div className="relative w-[100vw] h-[100vh] bg-white  shadow-lg overflow-hidden">
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="text-lg font-semibold">Project Photos</h3>
           <button
@@ -112,7 +115,7 @@ function Photogallary({ images, open, onClose }) {
           </button>
         </div>
 
-        <div className="p-4 flex flex-col h-[calc(90vh-96px)]">
+        <div className="p-4 flex flex-col h-[calc(98vh-96px)]">
           <div className="flex-1 flex items-center justify-center bg-gray-50 overflow-hidden relative group">
             <style>{`
               @keyframes slideInRight {

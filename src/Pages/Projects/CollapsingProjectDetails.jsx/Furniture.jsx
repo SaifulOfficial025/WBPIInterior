@@ -2,18 +2,19 @@ import React, { useState } from "react";
 import CustomIndicator from "../Shared/CustomIndicator";
 import { MdArrowOutward } from "react-icons/md";
 
-function Furniture() {
-  const [current, setCurrent] = useState(1);
-  const total = 3;
+function Furniture({ ffeList = [], projectImages = [] }) {
+  const [current, setCurrent] = useState(0);
 
-  const prev = () => setCurrent((c) => Math.max(1, c - 1));
-  const next = () => setCurrent((c) => Math.min(total, c + 1));
+  // Use project_images if available, otherwise use ffe_list images
+  const displayItems = projectImages.length > 0 ? projectImages : ffeList;
+  const total = displayItems.length || 3;
 
-  const cards = [
-    { img: "/furniture1.png", title: "Boardroom Table" },
-    { img: "/furniture2.png", title: "Area Type" },
-    { img: "/furniture3.png", title: "Area Type" },
-  ];
+  const prev = () => setCurrent((c) => Math.max(0, c - 1));
+  const next = () => setCurrent((c) => Math.min(total - 1, c + 1));
+
+  // Get current item details for display
+  const currentItem = displayItems[current];
+  const currentFFE = ffeList[current];
 
   return (
     <div className="w-full mt-16">
@@ -39,18 +40,23 @@ function Furniture() {
         </div>
 
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {cards.map((c, idx) => (
+          {displayItems.map((item, idx) => (
             <div key={idx} className="bg-white">
-              <div className="h-56 sm:h-64  flex items-center justify-center overflow-hidden ">
+              <div className="h-56 sm:h-64 flex items-center justify-center overflow-hidden">
                 <img
-                  src={c.img}
-                  alt={c.title}
+                  src={item.image || "/furniture1.png"}
+                  alt={item.title || "Furniture"}
                   className="max-h-full w-full object-contain"
+                  onError={(e) => {
+                    e.target.src = "/furniture1.png"; // Fallback image
+                  }}
                 />
               </div>
 
               <div className="flex items-center justify-between px-4 py-3 border-t border-gray-400 mt-5">
-                <div className="text-sm text-gray-700">{c.title}</div>
+                <div className="text-sm text-gray-700">
+                  {item.title || "Item"}
+                </div>
                 <MdArrowOutward className="text-gray-600 w-5 h-5" />
               </div>
             </div>
@@ -58,27 +64,30 @@ function Furniture() {
         </div>
 
         {/* Row 4: details */}
-        <div className="mt-6">
-          {/* <img src="/threeline.png" alt="menu" className="w-6 h-6 mt-1 mb-3" /> */}
-          <div className="flex items-start gap-3">
-            <div>
-              <div className="text-md text-gray-500 mt-1">
-                OFF-01 - High rectangular meeting table, has a structure
-                composed of two legs available in melamine & the tops can be in
-                wood finish melamine
-              </div>
-              <div className="text-md text-gray-700 mt-3">
-                <span className="font-semibold">Dimensions</span>: 25 MM thk.,
-                3200 mm long, 1430 mm wide & 750 mm
+        {currentFFE && (
+          <div className="mt-6">
+            <div className="flex items-start gap-3">
+              <div>
+                {currentFFE.description && (
+                  <div className="text-md text-gray-500 mt-1">
+                    {currentFFE.description}
+                  </div>
+                )}
+                {currentFFE.dimensions && (
+                  <div className="text-md text-gray-700 mt-3">
+                    <span className="font-semibold">Dimensions</span>:{" "}
+                    {currentFFE.dimensions}
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Row 5: indicator */}
-        <div className="max-w-xl mt-16 items-center mx-auto ">
+        <div className="max-w-xl mt-16 items-center mx-auto">
           <CustomIndicator
-            current={current}
+            current={current + 1}
             total={total}
             onPrev={prev}
             onNext={next}

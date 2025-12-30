@@ -93,7 +93,8 @@ Design Style: ${formData.designStyle || "Not selected"}
 ${formatCheckboxData(formData.spaceCond)}
 
 --- PROJECT TIMELINE ---
-Project Start/End: ${formatCheckboxData(formData.projectStart)}
+Project Start: ${formData.projectStartDate || "Not provided"}
+Project End: ${formData.projectEndDate || "Not provided"}
 Phasing: ${formData.phasing || "Not selected"}
 
 --- MEETING SCHEDULE ---

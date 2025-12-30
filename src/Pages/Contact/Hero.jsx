@@ -32,11 +32,11 @@ function Hero() {
         <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-end px-4 md:px-12 sm:mt-6 mt-4 mb-2 gap-4 sm:gap-4 gap-2">
           {/* Social Icons */}
           <div className="flex flex-row gap-4 sm:gap-4 gap-3 text-xl sm:text-xl text-lg md:text-2xl mb-2 md:mb-0">
-            <FaTwitter />
-            <FaFacebook />
+            {/* <FaTwitter /> */}
+            {/* <FaFacebook /> */}
             <FaWhatsapp />
             <FaInstagram />
-            <GrYoutube />
+            {/* <GrYoutube /> */}
             <FaLinkedinIn />
           </div>
           {/* Contact Info */}

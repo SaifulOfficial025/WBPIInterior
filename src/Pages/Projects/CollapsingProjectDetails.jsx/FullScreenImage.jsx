@@ -109,9 +109,15 @@ function FullScreenImage({ imgUrl, onSeeDetails }) {
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 w-screen h-screen overflow-hidden bg-white"
+      className="fixed inset-0 w-screen h-screen overflow-hidden bg-white z-[9999]"
       style={{
         cursor: "grab",
+        margin: 0,
+        padding: 0,
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -122,13 +128,9 @@ function FullScreenImage({ imgUrl, onSeeDetails }) {
         ref={imageRef}
         src={imgUrl}
         alt="Full Screen"
-        className="h-full w-auto max-w-none pointer-events-none"
+        className="w-full h-full pointer-events-none"
         style={{
-          transform: `translateX(${imagePosition}px)`,
-          transition: isDragging ? "none" : "transform 0.12s ease-out",
-          objectFit: "contain",
-          margin: "0 auto",
-          minWidth: "100%",
+          objectFit: "cover",
         }}
         onLoad={handleImageLoad}
         draggable={false}

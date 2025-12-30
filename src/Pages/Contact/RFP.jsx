@@ -23,29 +23,35 @@ function Checkbox({ label, checked, onChange }) {
   );
 }
 
-function SelectBox({ options, value, onChange, className }) {
+function SelectBox({
+  options,
+  value,
+  onChange,
+  className,
+  placeholder = "Select...",
+}) {
   return (
     <div className={`inline-block relative ${className || ""}`}>
       <select
         value={value || ""}
         onChange={onChange}
-        className="appearance-none bg-[#d6d3ce] text-sm px-2 py-1 pr-6 rounded-none border-none focus:outline-none min-w-[90px]"
+        className="appearance-none bg-[#d6d3ce] text-sm px-2 py-1 pr-6 rounded-none border-none focus:outline-none min-w-[90px] w-full"
       >
-        <option value="">Select...</option>
+        <option value="">{placeholder}</option>
         {options.map((opt, i) => (
           <option key={i} value={opt}>
             {opt}
           </option>
         ))}
       </select>
-      <span className="pointer-events-none absolute right-2 top-1.5 text-sm text-gray-500">
+      <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-sm text-gray-500">
         ▼
       </span>
     </div>
   );
 }
 
-function RFP() {
+function RFP({ onSuccess, onCancel }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -53,9 +59,10 @@ function RFP() {
     projectType: {},
     serviceType: {},
     designLevel: {},
-    spaceCond: {},
+    spaceCond: "",
     designStyle: "",
-    projectStart: {},
+    projectStartDate: "",
+    projectEndDate: "",
     phasing: "",
     schMeeting: {},
     sowType: {},
@@ -66,8 +73,7 @@ function RFP() {
     projectLocation: "",
   });
 
-  const [attachments1, setAttachments1] = useState([]);
-  const [attachments2, setAttachments2] = useState([]);
+  const [attachments, setattachments] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitMessage, setSubmitMessage] = useState("");
 
@@ -82,7 +88,7 @@ function RFP() {
     setSubmitMessage("");
 
     try {
-      const result = await sendRFPEmail(formData, attachments1, attachments2);
+      const result = await sendRFPEmail(formData, attachments);
 
       if (result.success) {
         setSubmitMessage("✓ " + result.message);
@@ -95,9 +101,10 @@ function RFP() {
             projectType: {},
             serviceType: {},
             designLevel: {},
-            spaceCond: {},
+            spaceCond: "",
             designStyle: "",
-            projectStart: {},
+            projectStartDate: "",
+            projectEndDate: "",
             phasing: "",
             schMeeting: {},
             sowType: {},
@@ -107,9 +114,13 @@ function RFP() {
             projectArea: "",
             projectLocation: "",
           });
-          setAttachments1([]);
-          setAttachments2([]);
+          setattachments([]);
           setSubmitMessage("");
+
+          // Call onSuccess callback if provided
+          if (onSuccess) {
+            onSuccess();
+          }
         }, 3000);
       } else {
         setSubmitMessage("✗ " + result.message);
@@ -136,92 +147,213 @@ function RFP() {
     }));
   };
 
+  // SOW parent-child mapping with unique keys
+  const sowParentChildMap = {
+    DESIGN: [
+      { key: "DESIGN_PRE-CONCEPT", label: "PRE-CONCEPT" },
+      { key: "DESIGN_CONCEPT DESIGN", label: "CONCEPT DESIGN" },
+      { key: "DESIGN_SCHEMATIC DESIGN", label: "SCHEMATIC DESIGN" },
+      { key: "DESIGN_DETAIL DESIGN", label: "DETAIL DESIGN" },
+      { key: "DESIGN_IFC", label: "IFC" },
+      { key: "DESIGN_AS-BUILD", label: "AS-BUILD" },
+    ],
+    "BUILD (FIT-OUT)": [
+      { key: "BUILD_SOFT REFURBISHMENT", label: "SOFT REFURBISHMENT" },
+      { key: "BUILD_FULL REFURBISHMENT", label: "FULL REFURBISHMENT" },
+      { key: "BUILD_PARTIAL REFURBISHMENT", label: "PARTIAL REFURBISHMENT" },
+      { key: "BUILD_AUTHORITY APPROVALS", label: "AUTHORITY APPROVALS" },
+      { key: "BUILD_FF&E", label: "FF&E" },
+      { key: "BUILD_DEMOLITION WORKS", label: "DEMOLITION WORKS" },
+      { key: "BUILD_JOINING UNITS", label: "JOINING UNITS" },
+    ],
+    "EXCEPTIONS TO BUILD": [
+      { key: "EXCEPTIONS_AUTHORITY APPROVALS", label: "AUTHORITY APPROVALS" },
+      { key: "EXCEPTIONS_FF&E", label: "FF&E" },
+      { key: "EXCEPTIONS_IT", label: "IT" },
+      { key: "EXCEPTIONS_AV", label: "AV" },
+      { key: "EXCEPTIONS_SECURITY", label: "SECURITY" },
+      { key: "EXCEPTIONS_FLS", label: "FLS" },
+      { key: "EXCEPTIONS_MEP", label: "MEP" },
+      { key: "EXCEPTIONS_CIVIL WORKS", label: "CIVIL WORKS" },
+      { key: "EXCEPTIONS_LIGHTING", label: "LIGHTING" },
+      { key: "EXCEPTIONS_JOINERY", label: "JOINERY" },
+    ],
+  };
+
+  // Get parent for a child option
+  const getParentForChild = (childKey) => {
+    for (const [parent, children] of Object.entries(sowParentChildMap)) {
+      if (children.some((child) => child.key === childKey)) {
+        return parent;
+      }
+    }
+    return null;
+  };
+
+  // Handle SOW checkbox change with auto-check parent
+  const handleSowCheckboxChange = (key) => {
+    setFormData((prev) => {
+      const newSowType = {
+        ...prev.sowType,
+        [key]: !prev.sowType[key],
+      };
+
+      // If checking a child option, also check the parent
+      const parent = getParentForChild(key);
+      if (parent && !prev.sowType[key]) {
+        // Only auto-check parent when checking (not unchecking) a child
+        newSowType[parent] = true;
+      }
+
+      return {
+        ...prev,
+        sowType: newSowType,
+      };
+    });
+  };
+
   const handleSelectChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
-    <div className="w-full bg-white text-gray-700 p-4 md:p-8">
-      <div className="text-3xl font-semibold mb-4">RFP</div>
+    <div className="w-full bg-white text-gray-700 p-6 md:p-10 lg:p-12">
+      <div className="text-3xl md:text-4xl font-semibold mb-8 text-gray-800">
+        RFP
+      </div>
       <form
-        className="grid grid-cols-1 md:grid-cols-2 gap-8"
+        className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6"
         onSubmit={handleSubmit}
       >
         {/* Left Column */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
           {/* Name, Email, Message */}
           <div>
-            <label className="text-sm text-gray-400 tracking-widest">
+            <label className="text-xs font-medium text-gray-400 tracking-widest uppercase mb-1 block">
               NAME
             </label>
             <input
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              className="block w-full border-0 border-b border-gray-300 focus:ring-0 text-sm py-2 bg-transparent"
+              className="block w-full border-0 border-b border-gray-300 focus:border-gray-500 focus:ring-0 text-sm py-2.5 bg-transparent transition-colors"
+              placeholder="Enter your full name"
             />
           </div>
           <div>
-            <label className="text-sm text-gray-400 tracking-widest">
+            <label className="text-xs font-medium text-gray-400 tracking-widest uppercase mb-1 block">
               EMAIL
             </label>
             <input
               name="email"
+              type="email"
               value={formData.email}
               onChange={handleInputChange}
-              className="block w-full border-0 border-b border-gray-300 focus:ring-0 text-sm py-2 bg-transparent"
+              className="block w-full border-0 border-b border-gray-300 focus:border-gray-500 focus:ring-0 text-sm py-2.5 bg-transparent transition-colors"
+              placeholder="Enter your email address"
             />
           </div>
           <div>
-            <label className="text-sm text-gray-400 tracking-widest">
+            <label className="text-xs font-medium text-gray-400 tracking-widest uppercase mb-1 block">
               MESSAGE
             </label>
             <textarea
               name="message"
               value={formData.message}
               onChange={handleInputChange}
-              className="block w-full border-0 border-b border-gray-300 focus:ring-0 text-sm py-2 bg-transparent min-h-[40px]"
+              className="block w-full border-0 border-b border-gray-300 focus:border-gray-500 focus:ring-0 text-sm py-2.5 bg-transparent min-h-[60px] resize-none transition-colors"
+              placeholder="Enter your message or additional details"
             />
           </div>
           {/* Attachments */}
-          <div className="mt-8">
-            <div className="flex items-center justify-between border-b border-gray-300 pb-2">
-              <div className="flex-1">
-                <div className="text-sm text-gray-400 tracking-widest">
-                  ATTACHMENTS
-                </div>
-                <div className="text-sm text-gray-500 mt-1">
-                  Note: Any relevant document
-                </div>
-                {attachments1.length > 0 && (
-                  <div className="text-xs text-gray-600 mt-2">
-                    {attachments1.map((file, idx) => (
-                      <div key={idx}>{file.name}</div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <input
-                type="file"
-                id="file-upload-1"
-                multiple
-                onChange={(e) => handleFileChange(e, setAttachments1)}
-                className="hidden"
-              />
-              <label htmlFor="file-upload-1" className="cursor-pointer">
-                <FaPaperclip className="text-lg text-gray-400 hover:text-gray-600" />
+          <div className="mt-4 p-4 bg-gray-50 rounded-sm">
+            <div className="text-xs font-medium text-gray-400 tracking-widest uppercase mb-2">
+              ATTACHMENTS
+            </div>
+            <div className="text-xs text-gray-500 leading-relaxed">
+              <span className="font-semibold text-gray-600">
+                Note: Upload all relevant documents to help us prepare an
+                accurate quotation, such as:
+              </span>
+              <p className="mt-1">
+                Project requirements, as-built drawings, BOQ (if available),
+                proposed design, mood direction, reference images, preferred
+                materials and equipment lists, branding guidelines, organization
+                matrix, corporate standards, building LOD guidelines, building
+                fit-out manual and any documentation issued by the building
+                management or authorities.
+              </p>
+            </div>
+            {/* File Upload */}
+            <div className="mt-3">
+              <label className="inline-flex items-center gap-2 cursor-pointer bg-[#d6d3ce] hover:bg-[#bdb8b2] px-4 py-2 rounded-sm transition-colors">
+                <FaPaperclip className="text-gray-600" />
+                <span className="text-sm text-gray-700">Choose Files</span>
+                <input
+                  type="file"
+                  multiple
+                  onChange={(e) => {
+                    const newFiles = Array.from(e.target.files);
+                    setattachments((prev) => [...prev, ...newFiles]);
+                    e.target.value = "";
+                  }}
+                  className="hidden"
+                />
               </label>
             </div>
+            {/* File List */}
+            {attachments.length > 0 && (
+              <div className="mt-3 space-y-2">
+                {attachments.map((file, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between bg-white px-3 py-2 rounded-sm border border-gray-200"
+                  >
+                    <div className="flex items-center gap-2 min-w-0">
+                      <FaPaperclip className="text-gray-400 flex-shrink-0 text-xs" />
+                      <span className="text-sm text-gray-600 truncate">
+                        {file.name}
+                      </span>
+                      <span className="text-xs text-gray-400 flex-shrink-0">
+                        ({(file.size / 1024).toFixed(1)} KB)
+                      </span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setattachments((prev) =>
+                          prev.filter((_, i) => i !== index)
+                        )
+                      }
+                      className="ml-2 text-gray-400 hover:text-red-500 transition-colors flex-shrink-0"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-4 w-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         {/* Right Column */}
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-5">
           {/* Project Type */}
-          <div>
-            <div className="flex items-center gap-4 border-b border-gray-300 pb-2">
-              <span className="text-sm text-gray-400 tracking-widest">
-                PROJECT TYPE
-              </span>
+          <div className="border-b border-gray-200 pb-4">
+            <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
+              PROJECT TYPE
+            </span>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
               <Checkbox
                 label="COMMERCIAL"
                 checked={formData.projectType["COMMERCIAL"]}
@@ -253,11 +385,11 @@ function RFP() {
             </div>
           </div>
           {/* Service Type */}
-          <div>
-            <div className="flex items-center gap-4 border-b border-gray-300 pb-2">
-              <span className="text-sm text-gray-400 tracking-widest">
-                SERVICE TYPE
-              </span>
+          <div className="border-b border-gray-200 pb-4">
+            <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
+              SERVICE TYPE
+            </span>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
               <Checkbox
                 label="BUILD"
                 checked={formData.serviceType["BUILD"]}
@@ -285,163 +417,97 @@ function RFP() {
             </div>
           </div>
           {/* Available Design Level */}
-          <div>
-            <div className="flex items-center gap-4 border-b border-gray-300 pb-2">
-              <span className="text-sm text-gray-400 tracking-widest">
-                AVAILABLE DESIGN LEVEL (LOD)
-              </span>
-              <Checkbox
-                label="AS-BUILDS"
-                checked={formData.designLevel["AS-BUILDS"]}
-                onChange={() =>
-                  handleCheckboxChange("designLevel", "AS-BUILDS")
-                }
-              />
-              <SelectBox
-                options={["PROPOSED", "AS-BUILTS"]}
-                value={formData.designLevel}
-                onChange={(e) =>
-                  handleSelectChange("designLevel", e.target.value)
-                }
-              />
-            </div>
-          </div>
-          {/* Missing Design Details */}
-          <div>
-            <div className="text-sm text-gray-400 tracking-widest mb-1">
-              MISSING DESIGN DETAILS EXCEPTIONS AND CLARIFICATIONS
-            </div>
-            <textarea
-              name="missingDesignDetails"
-              value={formData.missingDesignDetails || ""}
-              onChange={handleInputChange}
-              className="block w-full border-0 border-b border-gray-300 focus:ring-0 text-sm py-2 bg-transparent min-h-[32px]"
+          <div className="border-b border-gray-200 pb-4">
+            <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
+              AVAILABLE DESIGN LEVEL (LOD)
+            </span>
+            <SelectBox
+              options={["PROPOSED", "AS-BUILTS", "AS-BUILDS"]}
+              value={formData.designLevel}
+              onChange={(e) =>
+                handleSelectChange("designLevel", e.target.value)
+              }
             />
-          </div>
-          {/* Attachments (right) */}
-          <div className="mt-8">
-            <div className="flex items-center justify-between border-b border-gray-300 pb-2">
-              <div className="flex-1">
-                <div className="text-sm text-gray-400 tracking-widest">
-                  ATTACHMENTS
-                </div>
-                <div className="text-sm text-gray-500 mt-1">
-                  <b>
-                    Note: Upload all relevant documents to help us prepare an
-                    accurate quotation, such as:
-                  </b>
-                  <br />
-                  Project requirements, as-built drawings, BOQ (if available),
-                  proposed design, mood direction, reference images, preferred
-                  materials and equipment lists, branding guidelines,
-                  organization matrix, corporate standards, building LOD
-                  guidelines, building fit-out manual and any documentation
-                  issued by the building management or authorities.
-                </div>
-                {attachments2.length > 0 && (
-                  <div className="text-xs text-gray-600 mt-2">
-                    <b>Selected files:</b>
-                    {attachments2.map((file, idx) => (
-                      <div key={idx}>{file.name}</div>
-                    ))}
-                  </div>
-                )}
-              </div>
-              <input
-                type="file"
-                id="file-upload-2"
-                multiple
-                onChange={(e) => handleFileChange(e, setAttachments2)}
-                className="hidden"
-              />
-              <label htmlFor="file-upload-2" className="cursor-pointer">
-                <FaPaperclip className="text-lg text-gray-400 hover:text-gray-600" />
-              </label>
-            </div>
           </div>
         </div>
         {/* Full width section below columns */}
-        <div className="col-span-1 md:col-span-2 mt-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="col-span-1 lg:col-span-2 mt-6 pt-6 border-t border-gray-200">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-12 gap-y-6">
             {/* Left: Company, Project, Location, etc. */}
-            <div className="flex flex-col gap-4">
-              <div>
-                <label className="text-sm text-gray-400 tracking-widest">
-                  COMPANY NAME
-                </label>
-                <input
-                  name="companyName"
-                  value={formData.companyName}
-                  onChange={handleInputChange}
-                  className="block w-full border-0 border-b border-gray-300 focus:ring-0 text-sm py-2 bg-transparent"
-                />
+            <div className="flex flex-col gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="text-xs font-medium text-gray-400 tracking-widest uppercase mb-1 block">
+                    COMPANY NAME
+                  </label>
+                  <input
+                    name="companyName"
+                    value={formData.companyName}
+                    onChange={handleInputChange}
+                    className="block w-full border-0 border-b border-gray-300 focus:border-gray-500 focus:ring-0 text-sm py-2.5 bg-transparent transition-colors"
+                    placeholder="Enter company name"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-400 tracking-widest uppercase mb-1 block">
+                    PROJECT NAME
+                  </label>
+                  <input
+                    name="projectName"
+                    value={formData.projectName}
+                    onChange={handleInputChange}
+                    className="block w-full border-0 border-b border-gray-300 focus:border-gray-500 focus:ring-0 text-sm py-2.5 bg-transparent transition-colors"
+                    placeholder="Enter project name"
+                  />
+                </div>
               </div>
-              <div>
-                <label className="text-sm text-gray-400 tracking-widest">
-                  PROJECT NAME
-                </label>
-                <input
-                  name="projectName"
-                  value={formData.projectName}
-                  onChange={handleInputChange}
-                  className="block w-full border-0 border-b border-gray-300 focus:ring-0 text-sm py-2 bg-transparent"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-gray-400 tracking-widest">
-                  PROJECT AREA
-                </label>
-                <input
-                  name="projectArea"
-                  value={formData.projectArea}
-                  onChange={handleInputChange}
-                  className="block w-full border-0 border-b border-gray-300 focus:ring-0 text-sm py-2 bg-transparent"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-gray-400 tracking-widest">
-                  PROJECT LOCATION
-                </label>
-                <input
-                  name="projectLocation"
-                  value={formData.projectLocation}
-                  onChange={handleInputChange}
-                  className="block w-full border-0 border-b border-gray-300 focus:ring-0 text-sm py-2 bg-transparent"
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div>
+                  <label className="text-xs font-medium text-gray-400 tracking-widest uppercase mb-1 block">
+                    PROJECT AREA
+                  </label>
+                  <input
+                    name="projectArea"
+                    value={formData.projectArea}
+                    onChange={handleInputChange}
+                    className="block w-full border-0 border-b border-gray-300 focus:border-gray-500 focus:ring-0 text-sm py-2.5 bg-transparent transition-colors"
+                    placeholder="e.g., 5000 sqft"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-400 tracking-widest uppercase mb-1 block">
+                    PROJECT LOCATION
+                  </label>
+                  <input
+                    name="projectLocation"
+                    value={formData.projectLocation}
+                    onChange={handleInputChange}
+                    className="block w-full border-0 border-b border-gray-300 focus:border-gray-500 focus:ring-0 text-sm py-2.5 bg-transparent transition-colors"
+                    placeholder="Enter location"
+                  />
+                </div>
               </div>
               {/* Space Condition */}
-              <div className="flex items-center gap-4 border-b border-gray-300 pb-2">
-                <span className="text-sm text-gray-400 tracking-widest">
+              <div className="border-b border-gray-200 pb-4">
+                <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
                   SPACE CONDITION
                 </span>
-                <Checkbox
-                  label="SHELL & CORE"
-                  checked={formData.spaceCond["SHELL & CORE"]}
-                  onChange={() =>
-                    handleCheckboxChange("spaceCond", "SHELL & CORE")
-                  }
-                />
-                <Checkbox
-                  label="CAT A"
-                  checked={formData.spaceCond["CAT A"]}
-                  onChange={() => handleCheckboxChange("spaceCond", "CAT A")}
-                />
-                <Checkbox
-                  label="FITTED"
-                  checked={formData.spaceCond["FITTED"]}
-                  onChange={() => handleCheckboxChange("spaceCond", "FITTED")}
-                />
-                <Checkbox
-                  label="IN CONSTRUCTION"
-                  checked={formData.spaceCond["IN CONSTRUCTION"]}
-                  onChange={() =>
-                    handleCheckboxChange("spaceCond", "IN CONSTRUCTION")
+                <SelectBox
+                  options={[
+                    "SHELL & CORE",
+                    "CAT A",
+                    "FITTED",
+                    "IN CONSTRUCTION",
+                  ]}
+                  value={formData.spaceCond}
+                  onChange={(e) =>
+                    handleSelectChange("spaceCond", e.target.value)
                   }
                 />
               </div>
               {/* Design Style */}
-              <div className="flex items-center gap-4 border-b border-gray-300 pb-2">
-                <span className="text-sm text-gray-400 tracking-widest">
+              <div className="border-b border-gray-200 pb-4">
+                <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
                   DESIGN STYLE
                 </span>
                 <SelectBox
@@ -460,28 +526,40 @@ function RFP() {
                 />
               </div>
               {/* Project Start/End */}
-              <div className="flex items-center gap-4 border-b border-gray-300 pb-2">
-                <span className="text-sm text-gray-400 tracking-widest">
+              <div className="border-b border-gray-200 pb-4">
+                <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
                   PROJECT START/END
                 </span>
-                <Checkbox
-                  label="STARTING"
-                  checked={formData.projectStart["STARTING"]}
-                  onChange={() =>
-                    handleCheckboxChange("projectStart", "STARTING")
-                  }
-                />
-                <SelectBox
-                  options={["COMPLETION", "IN PROGRESS"]}
-                  value={formData.projectStart}
-                  onChange={(e) =>
-                    handleSelectChange("projectStart", e.target.value)
-                  }
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs text-gray-500">
+                      Estimated Start
+                    </label>
+                    <input
+                      type="date"
+                      name="projectStartDate"
+                      value={formData.projectStartDate || ""}
+                      onChange={handleInputChange}
+                      className="appearance-none bg-[#d6d3ce] text-sm px-3 py-2 rounded-sm border-none focus:outline-none focus:ring-1 focus:ring-gray-400"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs text-gray-500">
+                      Estimated End
+                    </label>
+                    <input
+                      type="date"
+                      name="projectEndDate"
+                      value={formData.projectEndDate || ""}
+                      onChange={handleInputChange}
+                      className="appearance-none bg-[#d6d3ce] text-sm px-3 py-2 rounded-sm border-none focus:outline-none focus:ring-1 focus:ring-gray-400"
+                    />
+                  </div>
+                </div>
               </div>
               {/* Phasing */}
-              <div className="flex items-center gap-4 border-b border-gray-300 pb-2">
-                <span className="text-sm text-gray-400 tracking-widest">
+              <div className="border-b border-gray-200 pb-4">
+                <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
                   PHASING
                 </span>
                 <SelectBox
@@ -498,92 +576,120 @@ function RFP() {
                 />
               </div>
               {/* Milestones Dates */}
-              <div className="border-b border-gray-300 pb-2">
-                <div className="flex items-center gap-4">
-                  <span className="text-sm text-gray-400 tracking-widest">
+              <div className="border-b border-gray-200 pb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-3">
+                  <span className="text-xs font-medium text-gray-400 tracking-widest uppercase">
                     MILESTONES DATES
                   </span>
-                  <span className="text-sm text-gray-400">
-                    Note: Completion dates for any specific scope or phase of
-                    the project
+                  <span className="text-xs text-gray-400 italic">
+                    (Completion dates for any specific scope or phase)
                   </span>
                 </div>
-                {[...Array(5)].map((_, i) => (
-                  <div key={i} className="flex items-center gap-2 mt-2">
-                    <SelectBox options={["Scope 1", "Scope 2", "Scope 3"]} />
-                    <input
-                      type="date"
-                      className="appearance-none bg-[#d6d3ce] text-sm px-2 py-1 rounded-none border-none focus:outline-none"
-                    />
-                  </div>
-                ))}
+                <div className="space-y-2">
+                  {[...Array(5)].map((_, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <SelectBox
+                        options={["Scope 1", "Scope 2", "Scope 3"]}
+                        className="flex-1"
+                      />
+                      <input
+                        type="date"
+                        className="appearance-none bg-[#d6d3ce] text-sm px-3 py-2 rounded-sm border-none focus:outline-none focus:ring-1 focus:ring-gray-400 flex-1"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
               {/* Schedule Meeting */}
-              <div className="flex items-center gap-4 border-b border-gray-300 pb-2 mt-2">
-                <span className="text-sm text-gray-400 tracking-widest">
+              <div className="border-b border-gray-200 pb-4">
+                <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
                   SCHEDULE MEETING
                 </span>
-                <Checkbox
-                  label="ONLINE"
-                  checked={formData.schMeeting["ONLINE"]}
-                  onChange={() => handleCheckboxChange("schMeeting", "ONLINE")}
-                />
-                <Checkbox
-                  label="IN PERSON"
-                  checked={formData.schMeeting["IN PERSON"]}
-                  onChange={() =>
-                    handleCheckboxChange("schMeeting", "IN PERSON")
-                  }
-                />
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                  <Checkbox
+                    label="ONLINE"
+                    checked={formData.schMeeting["ONLINE"]}
+                    onChange={() =>
+                      handleCheckboxChange("schMeeting", "ONLINE")
+                    }
+                  />
+                  <Checkbox
+                    label="IN PERSON"
+                    checked={formData.schMeeting["IN PERSON"]}
+                    onChange={() =>
+                      handleCheckboxChange("schMeeting", "IN PERSON")
+                    }
+                  />
+                </div>
               </div>
               {/* Meeting Schedule */}
-              <div className="flex flex-col gap-2 border-b border-gray-300 pb-2 mt-2">
-                <span className="text-sm text-gray-400 tracking-widest">
+              <div className="border-b border-gray-200 pb-4">
+                <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
                   MEETING SCHEDULE
                 </span>
-                {[...Array(2)].map((_, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <input
-                      type="date"
-                      className="appearance-none bg-[#d6d3ce] text-sm px-2 py-1 rounded-none border-none focus:outline-none flex-1"
-                      placeholder="Proposed Date"
-                    />
-                    <input
-                      type="time"
-                      className="appearance-none bg-[#d6d3ce] text-sm px-2 py-1 rounded-none border-none focus:outline-none flex-1"
-                      placeholder="Proposed Time"
-                    />
-                  </div>
-                ))}
+                <div className="space-y-2">
+                  {[...Array(2)].map((_, i) => (
+                    <div key={i} className="grid grid-cols-2 gap-3">
+                      <input
+                        type="date"
+                        className="appearance-none bg-[#d6d3ce] text-sm px-3 py-2 rounded-sm border-none focus:outline-none focus:ring-1 focus:ring-gray-400"
+                        placeholder="Proposed Date"
+                      />
+                      <input
+                        type="time"
+                        className="appearance-none bg-[#d6d3ce] text-sm px-3 py-2 rounded-sm border-none focus:outline-none focus:ring-1 focus:ring-gray-400"
+                        placeholder="Proposed Time"
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
               {/* Proposal Submission */}
-              <div className="flex items-center gap-2 border-b border-gray-300 pb-2 mt-2">
-                <span className="text-sm text-gray-400 tracking-widest">
+              <div className="border-b border-gray-200 pb-4">
+                <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
                   PROPOSAL SUBMISSION
                 </span>
-                <input
-                  type="date"
-                  className="appearance-none bg-[#d6d3ce] text-sm px-2 py-1 rounded-none border-none focus:outline-none min-w-[120px]"
-                />
-                <input
-                  type="time"
-                  className="appearance-none bg-[#d6d3ce] text-sm px-2 py-1 rounded-none border-none focus:outline-none min-w-[100px]"
-                />
+                <div className="grid grid-cols-2 gap-3">
+                  <input
+                    type="date"
+                    className="appearance-none bg-[#d6d3ce] text-sm px-3 py-2 rounded-sm border-none focus:outline-none focus:ring-1 focus:ring-gray-400"
+                  />
+                  <input
+                    type="time"
+                    className="appearance-none bg-[#d6d3ce] text-sm px-3 py-2 rounded-sm border-none focus:outline-none focus:ring-1 focus:ring-gray-400"
+                  />
+                </div>
               </div>
             </div>
             {/* Right: SOW, Nominations, etc. */}
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-5">
               {/* SOW (Scope of Works) */}
-              <div className="border-b border-gray-300 pb-2">
-                <div className="flex items-center gap-4 mb-2">
-                  <span className="text-sm text-gray-400 tracking-widest">
-                    SOW (SCOPE OF WORKS)
-                  </span>
+              <div className="border-b border-gray-200 pb-4">
+                <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-4">
+                  SOW (SCOPE OF WORKS)
+                </span>
+
+                {/* DESIGN Section */}
+                <div className="mb-4">
                   <Checkbox
                     label="DESIGN"
                     checked={formData.sowType["DESIGN"]}
                     onChange={() => handleCheckboxChange("sowType", "DESIGN")}
                   />
+                  <div className="ml-6 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
+                    {sowParentChildMap["DESIGN"].map((item, i) => (
+                      <Checkbox
+                        key={item.key}
+                        label={item.label}
+                        checked={formData.sowType[item.key]}
+                        onChange={() => handleSowCheckboxChange(item.key)}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* BUILD (FIT-OUT) Section */}
+                <div className="mb-4 pt-3 border-t border-gray-100">
                   <Checkbox
                     label="BUILD (FIT-OUT)"
                     checked={formData.sowType["BUILD (FIT-OUT)"]}
@@ -591,6 +697,20 @@ function RFP() {
                       handleCheckboxChange("sowType", "BUILD (FIT-OUT)")
                     }
                   />
+                  <div className="ml-6 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
+                    {sowParentChildMap["BUILD (FIT-OUT)"].map((item, i) => (
+                      <Checkbox
+                        key={item.key}
+                        label={item.label}
+                        checked={formData.sowType[item.key]}
+                        onChange={() => handleSowCheckboxChange(item.key)}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* EXCEPTIONS TO BUILD Section */}
+                <div className="mb-4 pt-3 border-t border-gray-100">
                   <Checkbox
                     label="EXCEPTIONS TO BUILD"
                     checked={formData.sowType["EXCEPTIONS TO BUILD"]}
@@ -598,108 +718,145 @@ function RFP() {
                       handleCheckboxChange("sowType", "EXCEPTIONS TO BUILD")
                     }
                   />
+                  <div className="ml-6 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
+                    {sowParentChildMap["EXCEPTIONS TO BUILD"].map((item, i) => (
+                      <Checkbox
+                        key={item.key}
+                        label={item.label}
+                        checked={formData.sowType[item.key]}
+                        onChange={() => handleSowCheckboxChange(item.key)}
+                      />
+                    ))}
+                    {[
+                      "OTHER_1",
+                      "OTHER_2",
+                      "OTHER_3",
+                      "OTHER_4",
+                      "OTHER_5",
+                      "OTHER_6",
+                    ].map((key, i) => (
+                      <SelectBox
+                        key={key}
+                        placeholder="OTHER"
+                        options={[
+                          "Signage",
+                          "Branding",
+                          "Furniture Assembly",
+                          "Cleaning",
+                          "Landscaping",
+                        ]}
+                        value={formData.sowType[key] || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            sowType: { ...prev.sowType, [key]: e.target.value },
+                          }))
+                        }
+                        className="w-full"
+                      />
+                    ))}
+                  </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  {[
-                    "PRE-CONCEPT",
-                    "CONCEPT DESIGN",
-                    "SCHEMATIC DESIGN",
-                    "DETAIL DESIGN",
-                    "IFC",
-                    "AS-BUILD",
-                    "SOFT REFURBISHMENT",
-                    "FULL REFURBISHMENT",
-                    "PARTIAL REFURBISHMENT",
-                    "AUTHORITY APPROVALS",
-                    "FF&E",
-                    "DEMOLITION WORKS",
-                    "JOINING UNITS",
-                    "IT",
-                    "AV",
-                    "SECURITY",
-                    "FLS",
-                    "MEP",
-                    "CIVIL WORKS",
-                    "LIGHTING",
-                    "JOINERY",
-                    "OTHER_1",
-                    "OTHER_2",
-                    "OTHER_3",
-                    "OTHER_4",
-                  ].map((label, i) => (
-                    <Checkbox
-                      key={i}
-                      label={label.startsWith("OTHER") ? "OTHER" : label}
-                      checked={formData.sowType[label]}
-                      onChange={() => handleCheckboxChange("sowType", label)}
-                    />
-                  ))}
-                </div>
-                {/* Sub-consultants */}
-                <div className="mt-2">
-                  <span className="text-sm text-gray-400 tracking-widest">
+
+                {/* SUB-CONSULTANTS Section */}
+                <div className="pt-3 border-t border-gray-100">
+                  <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
                     SUB-CONSULTANTS
                   </span>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-1">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
                     {[
-                      "ACOUSTIC",
-                      "FLS",
-                      "LANDSCAPING",
-                      "STRUCTURAL",
-                      "LEED/WELL",
+                      { key: "SUB_ACOUSTIC", label: "ACOUSTIC" },
+                      { key: "SUB_FLS", label: "FLS" },
+                      { key: "SUB_LANDSCAPING", label: "LANDSCAPING" },
+                      { key: "SUB_STRUCTURAL", label: "STRUCTURAL" },
+                      { key: "SUB_LEED/WELL", label: "LEED/WELL" },
+                    ].map((item, i) => (
+                      <Checkbox
+                        key={item.key}
+                        label={item.label}
+                        checked={formData.sowType[item.key]}
+                        onChange={() =>
+                          handleCheckboxChange("sowType", item.key)
+                        }
+                      />
+                    ))}
+                    {[
                       "OTHER_SUB_1",
                       "OTHER_SUB_2",
                       "OTHER_SUB_3",
                       "OTHER_SUB_4",
-                    ].map((label, i) => (
-                      <Checkbox
-                        key={i}
-                        label={label.startsWith("OTHER") ? "OTHER" : label}
-                        checked={formData.sowType[label]}
-                        onChange={() => handleCheckboxChange("sowType", label)}
+                    ].map((key) => (
+                      <SelectBox
+                        key={key}
+                        placeholder="OTHER"
+                        options={[
+                          "MEP Consultant",
+                          "Lighting Designer",
+                          "AV Specialist",
+                          "Kitchen Consultant",
+                          "Wayfinding",
+                        ]}
+                        value={formData.sowType[key] || ""}
+                        onChange={(e) =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            sowType: { ...prev.sowType, [key]: e.target.value },
+                          }))
+                        }
+                        className="w-full"
                       />
                     ))}
                   </div>
                 </div>
               </div>
               {/* Nominations */}
-              <div className="flex items-center gap-4 border-b border-gray-300 pb-2 mt-2">
-                <span className="text-sm text-gray-400 tracking-widest">
+              <div className="border-b border-gray-200 pb-4">
+                <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
                   NOMINATIONS
                 </span>
-                <Checkbox
-                  label="DESIGN"
-                  checked={formData.nominations["DESIGN"]}
-                  onChange={() => handleCheckboxChange("nominations", "DESIGN")}
-                />
-                <Checkbox
-                  label="BUILD"
-                  checked={formData.nominations["BUILD"]}
-                  onChange={() => handleCheckboxChange("nominations", "BUILD")}
-                />
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                  <Checkbox
+                    label="DESIGN"
+                    checked={formData.nominations["DESIGN"]}
+                    onChange={() =>
+                      handleCheckboxChange("nominations", "DESIGN")
+                    }
+                  />
+                  <Checkbox
+                    label="BUILD"
+                    checked={formData.nominations["BUILD"]}
+                    onChange={() =>
+                      handleCheckboxChange("nominations", "BUILD")
+                    }
+                  />
+                </div>
               </div>
-              <div className="text-sm text-gray-500 mt-2">
-                <b>Note:</b> Nominated vendors are suppliers, contractors, or
-                service providers introduced by the Client or by third parties
-                such as the Landlord, Consultant, or Authorities, who are
-                required to be considered or appointed for the project.
-                <br />
-                The Contractor will coordinate and integrate nominated vendors
-                into the project where applicable; however, responsibility for
-                their selection and performance remains with the nominating
-                party.
+              <div className="p-4 bg-gray-50 rounded-sm">
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  <span className="font-semibold text-gray-600">Note:</span>{" "}
+                  Nominated vendors are suppliers, contractors, or service
+                  providers introduced by the Client or by third parties such as
+                  the Landlord, Consultant, or Authorities, who are required to
+                  be considered or appointed for the project.
+                </p>
+                <p className="text-xs text-gray-500 leading-relaxed mt-2">
+                  The Contractor will coordinate and integrate nominated vendors
+                  into the project where applicable; however, responsibility for
+                  their selection and performance remains with the nominating
+                  party.
+                </p>
               </div>
             </div>
           </div>
         </div>
         {/* Send Button */}
-        <div className="col-span-1 md:col-span-2 flex flex-col items-center mt-8">
+        <div className="col-span-1 lg:col-span-2 flex flex-col items-center mt-10 pt-8 border-t border-gray-200">
           {submitMessage && (
             <div
-              className={`mb-4 text-sm font-medium ${
+              className={`mb-4 text-sm font-medium px-4 py-2 rounded ${
                 submitMessage.startsWith("✓")
-                  ? "text-green-600"
-                  : "text-red-600"
+                  ? "text-green-700 bg-green-50"
+                  : "text-red-700 bg-red-50"
               }`}
             >
               {submitMessage}
@@ -708,12 +865,11 @@ function RFP() {
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`bg-[#d6d3ce] text-black px-16 py-2 text-base font-medium tracking-widest ${
+            className={`bg-[#d6d3ce] text-black px-20 py-3 text-sm font-semibold tracking-widest uppercase transition-all ${
               isSubmitting
                 ? "opacity-50 cursor-not-allowed"
-                : "hover:bg-[#bdb8b2]"
+                : "hover:bg-[#bdb8b2] hover:shadow-md"
             }`}
-            style={{ letterSpacing: "0.1em" }}
           >
             {isSubmitting ? "SENDING..." : "SEND"}
           </button>
