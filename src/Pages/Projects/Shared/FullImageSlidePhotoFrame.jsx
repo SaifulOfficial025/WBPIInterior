@@ -180,9 +180,7 @@ function FullImageSlidePhotoFrame({
             <p className="text-[10px] sm:text-sm text-gray-600 uppercase">
               {location}
             </p>
-            <p className="text-[10px] sm:text-sm text-gray-600">
-              AREA {area} sqft
-            </p>
+            <p className="text-[10px] sm:text-sm text-gray-600">AREA {area}</p>
           </div>
         </div>
       </div>

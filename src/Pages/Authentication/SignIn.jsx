@@ -1,13 +1,16 @@
-
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { FaGoogle, FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa"
-import wencong_logo from '../../../public/huntrerboom_logo.png'
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { FaGoogle, FaFacebook, FaEye, FaEyeSlash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import logo from "../../../public/logo.png";
+import { Link } from "react-router-dom";
+import { login } from "../../ContextAPI/Authenticaltion";
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const {
     register,
@@ -20,13 +23,32 @@ export default function LoginPage() {
       password: "",
       rememberAccount: false,
     },
-  })
+  });
 
-
-  const onSubmit = (data) =>{
-    console.log(data)
-  }
-
+  const onSubmit = async (data) => {
+    setIsLoading(true);
+    setError("");
+    try {
+      const payload = {
+        email: data.email,
+        password: data.password,
+      };
+      const res = await login(payload);
+      // Store the entire response data in localStorage
+      if (res.data) {
+        localStorage.setItem("authData", JSON.stringify(res.data));
+        localStorage.setItem("accessToken", res.data.access);
+        localStorage.setItem("refreshToken", res.data.refresh);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      }
+      // Redirect to home
+      navigate("/");
+    } catch (err) {
+      setError(err?.message || "Login failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex">
@@ -34,9 +56,9 @@ export default function LoginPage() {
       <div className="hidden lg:flex lg:w-1/2 relative">
         <div
           className="w-full h-full bg-cover bg-center"
-          style={{ backgroundImage: "url('../../../public/login_side.png')" }}
+          style={{ backgroundImage: "url('../../../public/contacthero.png')" }}
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/30 to-red-500/30" />
+          <div className="absolute inset-0 " />
         </div>
       </div>
 
@@ -44,20 +66,27 @@ export default function LoginPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-white">
         <div className="w-full max-w-lg space-y-6">
           <div className="text-center">
-            <div className="rounded-full flex items-center justify-center mx-auto mb-4">
-              <img src={wencong_logo} alt="" />
-            </div>
-            <h2 className="text-3xl font-bold text-[#DE472D] text-[24px]">Sign In</h2>
-            <p className="text-[#35465B]  text-[20px] capitalize mt-3">Welcome back</p>
+            <Link to="/">
+              <div className="rounded-full flex items-center justify-center mx-auto mb-4">
+                <img src={logo} alt="" />
+              </div>
+            </Link>
+            <h2 className="text-3xl text-[#000000] text-[24px]">Sign In</h2>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="">
-    
+            {error && (
+              <div className="mb-4 text-center text-red-500 font-semibold">
+                {error}
+              </div>
+            )}
             <div className="mb-16">
-              <label className="block text-[#F04E24] text-[18px] font-medium mb-1">Email Address</label>
+              <label className="block text-[#000000] text-[18px]  mb-1">
+                Email Address
+              </label>
               <input
                 type="email"
-                className={`input input-bordered h-[61px] rounded-[18px] ps-5 w-full bg-[#FFE4DF] border-none text-[16px] text-[#797D8C] font-medium ${
+                className={`input input-bordered h-[61px] rounded-[18px] ps-5 w-full bg-[#f3f3f3] border-none text-[16px] text-[#000000]  ${
                   errors.email ? "input-error" : ""
                 }`}
                 placeholder="you@example.com"
@@ -70,18 +99,20 @@ export default function LoginPage() {
                 })}
               />
               {errors.email && (
-                <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.email.message}
+                </p>
               )}
             </div>
 
             {/* Password */}
             <div>
               <div className="flex justify-between items-center mb-1">
-                <label className="text-[#F04E24] text-[18px] font-medium ">Password</label>
+                <label className="text-[#000] text-[18px] ">Password</label>
                 <button
                   type="button"
                   className="text-sm italic hover:underline text-[#516F90]"
-                  onClick={() => alert("Password reset link")}
+                  onClick={() => navigate("/forget-password")}
                 >
                   Forgot Password?
                 </button>
@@ -89,7 +120,7 @@ export default function LoginPage() {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  className={`input input-bordered h-[61px] rounded-[18px] ps-5 text-[16px] text-[#797D8C] font-medium w-full bg-red-50 border-red-200 focus:border-orange-500 pr-10 ${
+                  className={`input input-bordered h-[61px] rounded-[18px] ps-5 text-[16px] text-[#000]  w-full bg-[#f3f3f3] border-none  pr-10 ${
                     errors.password ? "input-error" : ""
                   }`}
                   placeholder="••••••••"
@@ -110,37 +141,56 @@ export default function LoginPage() {
                 </button>
               </div>
               {errors.password && (
-                <p className="text-sm text-red-500 mt-1">{errors.password.message}</p>
+                <p className="text-sm text-red-500 mt-1">
+                  {errors.password.message}
+                </p>
               )}
             </div>
 
-          <div className="flex items-center gap-2 pt-3 pb-10">
-            <input type="checkbox" defaultChecked className="checkbox rounded-[3px] h-[20px] w-[20px] bg-[#FFE4DF] border-none checked:bg-[#FFE4DF]" />
-              <p className="italic text-base text-[#7C97B6]">Remember Password</p>
-          </div>
+            {/* <div className="flex items-center gap-2 pt-3 pb-10">
+              <input
+                type="checkbox"
+                defaultChecked
+                className="checkbox rounded-[3px] h-[20px] w-[20px] bg-[#FFE4DF] border-none checked:bg-[#FFE4DF]"
+              />
+              <p className="italic text-base text-[#7C97B6]">
+                Remember Password
+              </p>
+            </div> */}
 
             {/* Submit Button */}
-           <div className="flex items-center justify-center">
-             <button
-              type="submit"
-            
-              className="h-[58px] w-[252px] bg-[#F04E24] text-[20px] hover:bg-orange-600 rounded-[18px] text-white text-lg font-medium"
-            >
-              {isLoading ? (
-                <>
-                  <span className="loading loading-spinner loading-sm mr-2"></span>
-                  Signing In...
-                </>
-              ) : (
-                "Sign In"
-              )}
-            </button>
-           </div>
-          </form>
+            <div className="flex items-center justify-center mt-16">
+              <button
+                type="submit"
+                className="h-[58px] w-[252px] bg-[#000000] text-[20px] hover:bg-white rounded-[18px] text-white text-lg hover:text-black border-2 border-black flex items-center justify-center"
+              >
+                {isLoading ? (
+                  <>
+                    <span className="loading loading-spinner loading-sm mr-2"></span>
+                    Signing In...
+                  </>
+                ) : (
+                  "Sign In"
+                )}
+              </button>
+            </div>
 
-        
+            {/* Sign Up Link */}
+            <div className="text-center mt-6">
+              <p className="text-[#7C97B6] text-[16px]">
+                Don't have an account?{" "}
+                <button
+                  type="button"
+                  onClick={() => navigate("/signup")}
+                  className="text-[#516F90] hover:underline font-semibold"
+                >
+                  Sign Up
+                </button>
+              </p>
+            </div>
+          </form>
         </div>
       </div>
     </div>
-  )
+  );
 }

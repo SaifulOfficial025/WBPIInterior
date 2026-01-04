@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { FaPaperclip } from "react-icons/fa";
 import { FaCheck } from "react-icons/fa";
-import { sendRFPEmail } from "./RFPFormEmailWork";
+import { submitRFP } from "../../ContextAPI/Contact";
 
 const gray = "#d6d3ce";
 const checkedGray = "#8a8580";
@@ -12,6 +12,26 @@ function Checkbox({ label, checked, onChange }) {
       <span
         className={`inline-block w-4 h-4 border border-gray-300 rounded-sm mr-1 flex-shrink-0 flex items-center justify-center`}
         style={{ background: checked ? checkedGray : gray }}
+        onClick={onChange}
+      >
+        {checked && <FaCheck className="text-white text-xs" />}
+      </span>
+      <span className="text-sm tracking-wide text-gray-500" onClick={onChange}>
+        {label}
+      </span>
+    </label>
+  );
+}
+
+function Radio({ label, checked, onChange }) {
+  return (
+    <label className="flex items-center gap-2 cursor-pointer select-none">
+      <span
+        className={`inline-block w-4 h-4 border rounded-full mr-1 flex-shrink-0 flex items-center justify-center`}
+        style={{
+          background: checked ? checkedGray : gray,
+          borderColor: checked ? checkedGray : "#d1d5db",
+        }}
         onClick={onChange}
       >
         {checked && <FaCheck className="text-white text-xs" />}
@@ -51,12 +71,12 @@ function SelectBox({
   );
 }
 
-function RFP({ onSuccess, onCancel }) {
+function RFP({ onSuccess, onCancel, contactId }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
-    projectType: {},
+    projectType: "",
     serviceType: {},
     designLevel: {},
     spaceCond: "",
@@ -64,7 +84,7 @@ function RFP({ onSuccess, onCancel }) {
     projectStartDate: "",
     projectEndDate: "",
     phasing: "",
-    schMeeting: {},
+    schMeeting: "",
     sowType: {},
     nominations: {},
     companyName: "",
@@ -87,46 +107,72 @@ function RFP({ onSuccess, onCancel }) {
     setIsSubmitting(true);
     setSubmitMessage("");
 
+    if (!contactId) {
+      setSubmitMessage(
+        "✗ Contact ID not found. Please go back and fill contact details."
+      );
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
-      const result = await sendRFPEmail(formData, attachments);
+      // Prepare RFP payload
+      const rfpPayload = {
+        project_type: formData.projectType,
+        service_type: formData.serviceType,
+        design_level: formData.designLevel,
+        space_condition: formData.spaceCond,
+        design_style: formData.designStyle,
+        project_start_date: formData.projectStartDate,
+        project_end_date: formData.projectEndDate,
+        phasing: formData.phasing,
+        scheduled_meeting: formData.schMeeting,
+        scope_of_works: formData.sowType,
+        nominations: formData.nominations,
+        company_name: formData.companyName,
+        project_name: formData.projectName,
+        project_area: formData.projectArea,
+        project_location: formData.projectLocation,
+      };
 
-      if (result.success) {
-        setSubmitMessage("✓ " + result.message);
-        // Reset form after successful submission
-        setTimeout(() => {
-          setFormData({
-            name: "",
-            email: "",
-            message: "",
-            projectType: {},
-            serviceType: {},
-            designLevel: {},
-            spaceCond: "",
-            designStyle: "",
-            projectStartDate: "",
-            projectEndDate: "",
-            phasing: "",
-            schMeeting: {},
-            sowType: {},
-            nominations: {},
-            companyName: "",
-            projectName: "",
-            projectArea: "",
-            projectLocation: "",
-          });
-          setattachments([]);
-          setSubmitMessage("");
+      const result = await submitRFP(contactId, rfpPayload);
 
-          // Call onSuccess callback if provided
-          if (onSuccess) {
-            onSuccess();
-          }
-        }, 3000);
-      } else {
-        setSubmitMessage("✗ " + result.message);
-      }
+      setSubmitMessage("✓ RFP form submitted successfully!");
+      // Reset form after successful submission
+      setTimeout(() => {
+        setFormData({
+          name: "",
+          email: "",
+          message: "",
+          projectType: "",
+          serviceType: {},
+          designLevel: {},
+          spaceCond: "",
+          designStyle: "",
+          projectStartDate: "",
+          projectEndDate: "",
+          phasing: "",
+          schMeeting: "",
+          sowType: {},
+          nominations: {},
+          companyName: "",
+          projectName: "",
+          projectArea: "",
+          projectLocation: "",
+        });
+        setattachments([]);
+        setSubmitMessage("");
+
+        // Call onSuccess callback if provided
+        if (onSuccess) {
+          onSuccess();
+        }
+      }, 2000);
     } catch (error) {
-      setSubmitMessage("✗ An error occurred. Please try again.");
+      setSubmitMessage(
+        "✗ " +
+          (error?.message || "Failed to submit RFP form. Please try again.")
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -145,6 +191,10 @@ function RFP({ onSuccess, onCancel }) {
         [label]: !prev[category][label],
       },
     }));
+  };
+
+  const handleRadioChange = (field, value) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   // SOW parent-child mapping with unique keys
@@ -353,34 +403,20 @@ function RFP({ onSuccess, onCancel }) {
             <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
               PROJECT TYPE
             </span>
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-              <Checkbox
-                label="COMMERCIAL"
-                checked={formData.projectType["COMMERCIAL"]}
-                onChange={() =>
-                  handleCheckboxChange("projectType", "COMMERCIAL")
+            <div className="max-w-xs">
+              <SelectBox
+                options={[
+                  "COMMERCIAL",
+                  "RESIDENTIAL",
+                  "HOSPITALITY",
+                  "MIXED USE",
+                ]}
+                value={formData.projectType}
+                onChange={(e) =>
+                  handleSelectChange("projectType", e.target.value)
                 }
-              />
-              <Checkbox
-                label="RESIDENTIAL"
-                checked={formData.projectType["RESIDENTIAL"]}
-                onChange={() =>
-                  handleCheckboxChange("projectType", "RESIDENTIAL")
-                }
-              />
-              <Checkbox
-                label="HOSPITALITY"
-                checked={formData.projectType["HOSPITALITY"]}
-                onChange={() =>
-                  handleCheckboxChange("projectType", "HOSPITALITY")
-                }
-              />
-              <Checkbox
-                label="MIXED USE"
-                checked={formData.projectType["MIXED USE"]}
-                onChange={() =>
-                  handleCheckboxChange("projectType", "MIXED USE")
-                }
+                placeholder="Select project type"
+                className="w-full"
               />
             </div>
           </div>
@@ -606,18 +642,16 @@ function RFP({ onSuccess, onCancel }) {
                   SCHEDULE MEETING
                 </span>
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
-                  <Checkbox
+                  <Radio
                     label="ONLINE"
-                    checked={formData.schMeeting["ONLINE"]}
-                    onChange={() =>
-                      handleCheckboxChange("schMeeting", "ONLINE")
-                    }
+                    checked={formData.schMeeting === "ONLINE"}
+                    onChange={() => handleRadioChange("schMeeting", "ONLINE")}
                   />
-                  <Checkbox
+                  <Radio
                     label="IN PERSON"
-                    checked={formData.schMeeting["IN PERSON"]}
+                    checked={formData.schMeeting === "IN PERSON"}
                     onChange={() =>
-                      handleCheckboxChange("schMeeting", "IN PERSON")
+                      handleRadioChange("schMeeting", "IN PERSON")
                     }
                   />
                 </div>

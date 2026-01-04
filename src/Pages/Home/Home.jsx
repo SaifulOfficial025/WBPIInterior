@@ -23,10 +23,10 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="absolute right-20 bottom-16 flex gap-6">
+        {/* <div className="absolute right-20 bottom-16 flex gap-6">
           <div className="w-36 h-36 bg-black bg-opacity-55 border border-gray-300/10"></div>
           <div className="w-36 h-36 bg-black bg-opacity-55 border border-gray-300/10"></div>
-        </div>
+        </div> */}
       </main>
     </div>
   );

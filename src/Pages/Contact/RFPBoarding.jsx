@@ -1,9 +1,13 @@
 import React, { useState } from "react";
 import RFP from "./RFP";
+import { createContact, updateContact } from "../../ContextAPI/Contact";
 
 function RFPBoarding({ onClose }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [showRFPForm, setShowRFPForm] = useState(false);
+  const [contactId, setContactId] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState("");
   const [formData, setFormData] = useState({
     projectType: "",
     serviceType: "",
@@ -24,21 +28,120 @@ function RFPBoarding({ onClose }) {
     heardFromOther: "",
   });
 
+  // Save form data to localStorage
+  const saveToLocalStorage = () => {
+    localStorage.setItem("rfpFormData", JSON.stringify(formData));
+  };
+
+  // Load form data from localStorage
+  const loadFromLocalStorage = () => {
+    const saved = localStorage.getItem("rfpFormData");
+    if (saved) {
+      setFormData(JSON.parse(saved));
+    }
+  };
+
+  // Prepare payload for contact APIs
+  const prepareContactPayload = () => {
+    return {
+      project_type: formData.projectType,
+      type_of_service: formData.serviceType,
+      area_range_unit: formData.areaUnit,
+      area_range_value: formData.customArea || formData.areaRange,
+      budget_range: formData.customBudget || formData.budgetRange,
+      name: formData.name,
+      company_name: formData.companyName,
+      mobile_number: formData.mobile,
+      email: formData.email,
+      meeting_type: formData.meetingType,
+      meeting_date_1: formData.proposedDates[0],
+      meeting_date_2: formData.proposedDates[1],
+      project_message: formData.message,
+      heard_about:
+        formData.heardFrom === "Other"
+          ? formData.heardFromOther
+          : formData.heardFrom,
+      is_completed: false,
+      project_attachments: formData.attachments.map((f) => f.name) || [],
+    };
+  };
+
   const handleNext = () => {
+    saveToLocalStorage();
     setCurrentPage((prev) => prev + 1);
   };
 
   const handleSkip = () => {
+    saveToLocalStorage();
     setCurrentPage((prev) => prev + 1);
   };
 
   const handleBack = () => {
+    saveToLocalStorage();
     setCurrentPage((prev) => prev - 1);
   };
 
-  const handleSubmit = () => {
-    console.log("Form submitted:", formData);
-    setCurrentPage(8); // Show thank you message
+  const handleContactDetailsSubmit = async () => {
+    setIsSubmitting(true);
+    setSubmitError("");
+    try {
+      saveToLocalStorage();
+      const payload = prepareContactPayload();
+      const response = await createContact(payload);
+
+      if (response.data?.id) {
+        setContactId(response.data.id);
+        localStorage.setItem("contactId", response.data.id.toString());
+        setCurrentPage(6); // Move to project details
+      }
+    } catch (error) {
+      setSubmitError(error?.message || "Failed to submit contact details");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    setSubmitError("");
+    try {
+      const id = contactId || localStorage.getItem("contactId");
+      if (!id) {
+        throw new Error("Contact ID not found");
+      }
+
+      const payload = {
+        project_type: formData.projectType,
+        type_of_service: formData.serviceType,
+        area_range_unit: formData.areaUnit,
+        area_range_value: formData.customArea || formData.areaRange,
+        budget_range: formData.customBudget || formData.budgetRange,
+        name: formData.name,
+        company_name: formData.companyName,
+        mobile_number: formData.mobile,
+        email: formData.email,
+        meeting_type: formData.meetingType,
+        meeting_date_1: formData.proposedDates[0],
+        meeting_date_2: formData.proposedDates[1],
+        project_message: formData.message,
+        heard_about:
+          formData.heardFrom === "Other"
+            ? formData.heardFromOther
+            : formData.heardFrom,
+        is_completed: true,
+      };
+
+      await updateContact(id, payload);
+      setCurrentPage(8); // Show thank you message
+
+      // Clear localStorage
+      localStorage.removeItem("rfpFormData");
+      localStorage.removeItem("contactId");
+    } catch (error) {
+      setSubmitError(error?.message || "Failed to submit form");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleFileAttachment = (e) => {
@@ -325,9 +428,10 @@ function RFPBoarding({ onClose }) {
               ← Back to Widget
             </button>
             <RFP
+              contactId={contactId || localStorage.getItem("contactId")}
               onSuccess={() => {
                 setShowRFPForm(false);
-                setCurrentPage(7); // Skip to page 7 after successful submission
+                setCurrentPage(7); // Move to "Where did you hear about us" page
               }}
               onCancel={() => setShowRFPForm(false)}
             />
@@ -553,12 +657,20 @@ function RFPBoarding({ onClose }) {
           </div>
 
           <button
-            onClick={handleNext}
-            disabled={!formData.name || !formData.mobile || !formData.email}
+            onClick={handleContactDetailsSubmit}
+            disabled={
+              !formData.name ||
+              !formData.mobile ||
+              !formData.email ||
+              isSubmitting
+            }
             className="w-full md:w-auto px-12 py-4 bg-black text-white text-lg font-medium hover:bg-[#bdb8b2] hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Ok
+            {isSubmitting ? "Submitting..." : "Ok"}
           </button>
+          {submitError && (
+            <p className="mt-4 text-red-600 font-semibold">{submitError}</p>
+          )}
         </div>
       </div>
     );
@@ -626,11 +738,14 @@ function RFPBoarding({ onClose }) {
 
           <button
             onClick={handleSubmit}
-            disabled={!formData.heardFrom}
+            disabled={!formData.heardFrom || isSubmitting}
             className="w-full md:w-auto px-12 py-4 bg-black text-white text-lg font-medium hover:bg-[#bdb8b2] hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Ok
+            {isSubmitting ? "Submitting..." : "Ok"}
           </button>
+          {submitError && (
+            <p className="mt-4 text-red-600 font-semibold">{submitError}</p>
+          )}
         </div>
       </div>
     );
