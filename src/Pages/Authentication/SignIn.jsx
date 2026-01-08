@@ -84,7 +84,7 @@ export default function LoginPage() {
               </label>
               <input
                 type="email"
-                className={`input input-bordered h-[61px] ps-5 w-full bg-[#f3f3f3] border-none text-[16px] text-[#000000]  ${
+                className={`input input-bordered h-[61px] ps-5 w-full bg-transparent border border-white text-[16px] text-[#fff] placeholder:text-white  ${
                   errors.email ? "input-error" : ""
                 }`}
                 placeholder="you@example.com"
@@ -118,7 +118,7 @@ export default function LoginPage() {
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  className={`input input-bordered h-[61px] ps-5 text-[16px] text-[#000]  w-full bg-[#f3f3f3] border-none  pr-10 ${
+                  className={`input input-bordered h-[61px] ps-5 text-[16px] text-[#fff]  w-full bg-transparent border border-white placeholder:text-white pr-10 ${
                     errors.password ? "input-error" : ""
                   }`}
                   placeholder="••••••••"
