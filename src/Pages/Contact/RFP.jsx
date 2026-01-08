@@ -102,6 +102,44 @@ function RFP({ onSuccess, onCancel, contactId }) {
     setterFn(files);
   };
 
+  // Convert file to base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onload = () => {
+        const bytes = new Uint8Array(reader.result);
+        let binary = "";
+        for (let i = 0; i < bytes.byteLength; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        const base64 = btoa(binary);
+        resolve(base64);
+      };
+      reader.onerror = reject;
+    });
+  };
+
+  // Convert attachments to the required format
+  const prepareAttachments = async () => {
+    const attachmentArray = [];
+    for (const file of attachments) {
+      try {
+        const base64Content = await fileToBase64(file);
+        const mimeType = file.type || "application/octet-stream";
+        const attachmentJson = {
+          name: file.name,
+          content: base64Content,
+          type: mimeType,
+        };
+        attachmentArray.push(btoa(JSON.stringify(attachmentJson)));
+      } catch (error) {
+        console.error(`Error processing file ${file.name}:`, error);
+      }
+    }
+    return attachmentArray;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -116,6 +154,9 @@ function RFP({ onSuccess, onCancel, contactId }) {
     }
 
     try {
+      // Prepare attachments in the required format
+      const encodedAttachments = await prepareAttachments();
+
       // Prepare RFP payload
       const rfpPayload = {
         project_type: formData.projectType,
@@ -133,6 +174,7 @@ function RFP({ onSuccess, onCancel, contactId }) {
         project_name: formData.projectName,
         project_area: formData.projectArea,
         project_location: formData.projectLocation,
+        attachments: encodedAttachments,
       };
 
       const result = await submitRFP(contactId, rfpPayload);
@@ -705,11 +747,9 @@ function RFP({ onSuccess, onCancel, contactId }) {
 
                 {/* DESIGN Section */}
                 <div className="mb-4">
-                  <Checkbox
-                    label="DESIGN"
-                    checked={formData.sowType["DESIGN"]}
-                    onChange={() => handleCheckboxChange("sowType", "DESIGN")}
-                  />
+                  <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
+                    DESIGN
+                  </span>
                   <div className="ml-6 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
                     {sowParentChildMap["DESIGN"].map((item, i) => (
                       <Checkbox
@@ -724,13 +764,9 @@ function RFP({ onSuccess, onCancel, contactId }) {
 
                 {/* BUILD (FIT-OUT) Section */}
                 <div className="mb-4 pt-3 border-t border-gray-100">
-                  <Checkbox
-                    label="BUILD (FIT-OUT)"
-                    checked={formData.sowType["BUILD (FIT-OUT)"]}
-                    onChange={() =>
-                      handleCheckboxChange("sowType", "BUILD (FIT-OUT)")
-                    }
-                  />
+                  <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
+                    BUILD (FIT-OUT)
+                  </span>
                   <div className="ml-6 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
                     {sowParentChildMap["BUILD (FIT-OUT)"].map((item, i) => (
                       <Checkbox
@@ -745,13 +781,9 @@ function RFP({ onSuccess, onCancel, contactId }) {
 
                 {/* EXCEPTIONS TO BUILD Section */}
                 <div className="mb-4 pt-3 border-t border-gray-100">
-                  <Checkbox
-                    label="EXCEPTIONS TO BUILD"
-                    checked={formData.sowType["EXCEPTIONS TO BUILD"]}
-                    onChange={() =>
-                      handleCheckboxChange("sowType", "EXCEPTIONS TO BUILD")
-                    }
-                  />
+                  <span className="text-xs font-medium text-gray-400 tracking-widest uppercase block mb-3">
+                    EXCEPTIONS TO BUILD
+                  </span>
                   <div className="ml-6 mt-2 grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-2">
                     {sowParentChildMap["EXCEPTIONS TO BUILD"].map((item, i) => (
                       <Checkbox
@@ -761,34 +793,39 @@ function RFP({ onSuccess, onCancel, contactId }) {
                         onChange={() => handleSowCheckboxChange(item.key)}
                       />
                     ))}
-                    {[
-                      "OTHER_1",
-                      "OTHER_2",
-                      "OTHER_3",
-                      "OTHER_4",
-                      "OTHER_5",
-                      "OTHER_6",
-                    ].map((key, i) => (
-                      <SelectBox
-                        key={key}
-                        placeholder="OTHER"
-                        options={[
-                          "Signage",
-                          "Branding",
-                          "Furniture Assembly",
-                          "Cleaning",
-                          "Landscaping",
-                        ]}
-                        value={formData.sowType[key] || ""}
-                        onChange={(e) =>
-                          setFormData((prev) => ({
-                            ...prev,
-                            sowType: { ...prev.sowType, [key]: e.target.value },
-                          }))
-                        }
-                        className="w-full"
-                      />
-                    ))}
+                    <div className="col-span-2 sm:col-span-3 grid grid-cols-3 gap-x-4 gap-y-2">
+                      {[
+                        "OTHER_1",
+                        "OTHER_2",
+                        "OTHER_3",
+                        "OTHER_4",
+                        "OTHER_5",
+                        "OTHER_6",
+                      ].map((key, i) => (
+                        <SelectBox
+                          key={key}
+                          placeholder="OTHER"
+                          options={[
+                            "Signage",
+                            "Branding",
+                            "Furniture Assembly",
+                            "Cleaning",
+                            "Landscaping",
+                          ]}
+                          value={formData.sowType[key] || ""}
+                          onChange={(e) =>
+                            setFormData((prev) => ({
+                              ...prev,
+                              sowType: {
+                                ...prev.sowType,
+                                [key]: e.target.value,
+                              },
+                            }))
+                          }
+                          className="w-full"
+                        />
+                      ))}
+                    </div>
                   </div>
                 </div>
 

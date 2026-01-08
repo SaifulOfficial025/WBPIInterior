@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import Profile from "../Pages/Authentication/Profile";
+import PasswordChangeModal from "../Pages/Authentication/PasswordChangeModal";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -130,7 +134,7 @@ function Header() {
                     <button
                       onClick={() => {
                         setDropdownOpen(false);
-                        navigate("/profile");
+                        setIsProfileOpen(true);
                       }}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       type="button"
@@ -140,7 +144,7 @@ function Header() {
                     <button
                       onClick={() => {
                         setDropdownOpen(false);
-                        navigate("/change-password");
+                        setIsPasswordModalOpen(true);
                       }}
                       className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                       type="button"
@@ -167,7 +171,7 @@ function Header() {
                       : "text-gray-700 hover:text-[#d94a6c] transition-colors"
                   }
                 >
-                  SIGN IN
+                  PREMIUM ACCESS
                 </NavLink>
               </li>
             )}
@@ -204,7 +208,7 @@ function Header() {
                   <button
                     onClick={() => {
                       handleNavClick();
-                      navigate("/profile");
+                      setIsProfileOpen(true);
                     }}
                     className="text-gray-700 hover:text-[#d94a6c] transition-colors w-full text-left"
                     type="button"
@@ -216,7 +220,7 @@ function Header() {
                   <button
                     onClick={() => {
                       handleNavClick();
-                      navigate("/change-password");
+                      setIsPasswordModalOpen(true);
                     }}
                     className="text-gray-700 hover:text-[#d94a6c] transition-colors w-full text-left"
                     type="button"
@@ -252,6 +256,14 @@ function Header() {
           </ul>
         </nav>
       </div>
+
+      {/* Profile Modal */}
+      <Profile isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
+      {/* Password Change Modal */}
+      <PasswordChangeModal
+        isOpen={isPasswordModalOpen}
+        onClose={() => setIsPasswordModalOpen(false)}
+      />
     </header>
   );
 }

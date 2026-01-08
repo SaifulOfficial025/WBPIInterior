@@ -51,27 +51,25 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex">
-      {/* Left Side Image */}
-      <div className="hidden lg:flex lg:w-1/2 relative">
+    <div className="min-h-screen relative">
+      {/* Full Screen Background Image */}
+      <div className="absolute inset-0 w-full h-full">
         <div
           className="w-full h-full bg-cover bg-center"
           style={{ backgroundImage: "url('../../../public/contacthero.png')" }}
-        >
-          <div className="absolute inset-0 " />
-        </div>
+        />
       </div>
 
-      {/* Right Side Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 bg-white">
-        <div className="w-full max-w-lg space-y-6">
+      {/* Form Overlay - Centered */}
+      <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
+        <div className="w-full max-w-lg space-y-6 p-8 backdrop-blur-md bg-white/20 border border-white/30 shadow-xl">
           <div className="text-center">
             <Link to="/">
-              <div className="rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className=" flex items-center justify-center mx-auto mb-4">
                 <img src={logo} alt="" />
               </div>
             </Link>
-            <h2 className="text-3xl text-[#000000] text-[24px]">Sign In</h2>
+            <h2 className="text-3xl text-[#fff] text-[24px]">Sign In</h2>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="">
@@ -86,7 +84,7 @@ export default function LoginPage() {
               </label>
               <input
                 type="email"
-                className={`input input-bordered h-[61px] rounded-[18px] ps-5 w-full bg-[#f3f3f3] border-none text-[16px] text-[#000000]  ${
+                className={`input input-bordered h-[61px] ps-5 w-full bg-[#f3f3f3] border-none text-[16px] text-[#000000]  ${
                   errors.email ? "input-error" : ""
                 }`}
                 placeholder="you@example.com"
@@ -109,18 +107,18 @@ export default function LoginPage() {
             <div>
               <div className="flex justify-between items-center mb-1">
                 <label className="text-[#000] text-[18px] ">Password</label>
-                <button
+                {/* <button
                   type="button"
                   className="text-sm italic hover:underline text-[#516F90]"
                   onClick={() => navigate("/forget-password")}
                 >
                   Forgot Password?
-                </button>
+                </button> */}
               </div>
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
-                  className={`input input-bordered h-[61px] rounded-[18px] ps-5 text-[16px] text-[#000]  w-full bg-[#f3f3f3] border-none  pr-10 ${
+                  className={`input input-bordered h-[61px] ps-5 text-[16px] text-[#000]  w-full bg-[#f3f3f3] border-none  pr-10 ${
                     errors.password ? "input-error" : ""
                   }`}
                   placeholder="••••••••"
@@ -162,7 +160,7 @@ export default function LoginPage() {
             <div className="flex items-center justify-center mt-16">
               <button
                 type="submit"
-                className="h-[58px] w-[252px] bg-[#000000] text-[20px] hover:bg-white rounded-[18px] text-white text-lg hover:text-black border-2 border-black flex items-center justify-center"
+                className="h-[58px] w-[252px] bg-[#000000] text-[20px] hover:bg-white  text-white text-lg hover:text-black border-2 border-black flex items-center justify-center"
               >
                 {isLoading ? (
                   <>
@@ -176,7 +174,7 @@ export default function LoginPage() {
             </div>
 
             {/* Sign Up Link */}
-            <div className="text-center mt-6">
+            {/* <div className="text-center mt-6">
               <p className="text-[#7C97B6] text-[16px]">
                 Don't have an account?{" "}
                 <button
@@ -187,7 +185,7 @@ export default function LoginPage() {
                   Sign Up
                 </button>
               </p>
-            </div>
+            </div> */}
           </form>
         </div>
       </div>

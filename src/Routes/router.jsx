@@ -13,6 +13,7 @@ import OTPVerification from "../Pages/Authentication/OTPVerification.jsx";
 import ForgetPassword from "../Pages/Authentication/ForgetPassword.jsx";
 import ForgetPasswordOTP from "../Pages/Authentication/ForgetPasswordOTP.jsx";
 import ResetPassword from "../Pages/Authentication/ResetPassword.jsx";
+import Profile from "../Pages/Authentication/Profile.jsx";
 
 export const router = createBrowserRouter([
   {
@@ -74,5 +75,17 @@ export const router = createBrowserRouter([
   {
     path: "/reset-password",
     element: <ResetPassword />,
+  },
+  {
+    path: "/profile",
+    element: <Profile />,
+  },
+  {
+    path: "/change-password",
+    element: <ResetPassword />,
+  },
+  {
+    path: "*",
+    element: <Home />,
   },
 ]);

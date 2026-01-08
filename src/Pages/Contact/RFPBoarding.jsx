@@ -42,7 +42,7 @@ function RFPBoarding({ onClose }) {
   };
 
   // Prepare payload for contact APIs
-  const prepareContactPayload = () => {
+  const prepareContactPayload = (encodedAttachments = []) => {
     return {
       project_type: formData.projectType,
       type_of_service: formData.serviceType,
@@ -62,7 +62,10 @@ function RFPBoarding({ onClose }) {
           ? formData.heardFromOther
           : formData.heardFrom,
       is_completed: false,
-      project_attachments: formData.attachments.map((f) => f.name) || [],
+      project_attachments:
+        encodedAttachments.length > 0
+          ? encodedAttachments
+          : formData.attachments.map((f) => f.name) || [],
     };
   };
 
@@ -86,7 +89,11 @@ function RFPBoarding({ onClose }) {
     setSubmitError("");
     try {
       saveToLocalStorage();
-      const payload = prepareContactPayload();
+
+      // Prepare encoded attachments
+      const encodedAttachments = await prepareAttachments();
+
+      const payload = prepareContactPayload(encodedAttachments);
       const response = await createContact(payload);
 
       if (response.data?.id) {
@@ -110,6 +117,9 @@ function RFPBoarding({ onClose }) {
         throw new Error("Contact ID not found");
       }
 
+      // Prepare encoded attachments
+      const encodedAttachments = await prepareAttachments();
+
       const payload = {
         project_type: formData.projectType,
         type_of_service: formData.serviceType,
@@ -129,6 +139,7 @@ function RFPBoarding({ onClose }) {
             ? formData.heardFromOther
             : formData.heardFrom,
         is_completed: true,
+        project_attachments: encodedAttachments,
       };
 
       await updateContact(id, payload);
@@ -147,6 +158,44 @@ function RFPBoarding({ onClose }) {
   const handleFileAttachment = (e) => {
     const files = Array.from(e.target.files);
     setFormData({ ...formData, attachments: files });
+  };
+
+  // Convert file to base64
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsArrayBuffer(file);
+      reader.onload = () => {
+        const bytes = new Uint8Array(reader.result);
+        let binary = "";
+        for (let i = 0; i < bytes.byteLength; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        const base64 = btoa(binary);
+        resolve(base64);
+      };
+      reader.onerror = reject;
+    });
+  };
+
+  // Convert attachments to the required format
+  const prepareAttachments = async () => {
+    const attachmentArray = [];
+    for (const file of formData.attachments) {
+      try {
+        const base64Content = await fileToBase64(file);
+        const mimeType = file.type || "application/octet-stream";
+        const attachmentJson = {
+          name: file.name,
+          content: base64Content,
+          type: mimeType,
+        };
+        attachmentArray.push(btoa(JSON.stringify(attachmentJson)));
+      } catch (error) {
+        console.error(`Error processing file ${file.name}:`, error);
+      }
+    }
+    return attachmentArray;
   };
 
   // Page 1: Welcome
@@ -485,7 +534,7 @@ function RFPBoarding({ onClose }) {
             )}
           </div>
 
-          <div className="mb-8 p-6  bg-opacity-20 border-2 border-[#bdb8b2]">
+          <div className="mb-8 p-6  bg-opacity-20 text-right">
             <p className="text-black mb-4">
               If you can provide more details, please open our detail{" "}
               <button
@@ -500,9 +549,10 @@ function RFPBoarding({ onClose }) {
           <div className="flex gap-4">
             <button
               onClick={handleNext}
-              className="px-12 py-4 bg-black text-white text-lg font-medium hover:bg-[#bdb8b2] hover:text-black transition-colors"
+              disabled={!formData.message && formData.attachments.length === 0}
+              className="px-12 py-4 bg-black text-white text-lg font-medium hover:bg-[#bdb8b2] hover:text-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Ok
+              Send
             </button>
             <button
               onClick={handleSkip}
@@ -528,7 +578,7 @@ function RFPBoarding({ onClose }) {
             ← Back
           </button>
           <h2 className="text-3xl font-light text-black mb-4">
-            Provide following Contact details:
+            Contact details:
           </h2>
           <p className="text-sm text-black mb-8 opacity-75">
             We respect your privacy, your contact details will never be shared,

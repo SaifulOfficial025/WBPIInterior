@@ -129,6 +129,7 @@ function RootPage({
       {showFullScreen && (
         <FullScreenImage
           imgUrl={coverImage}
+          galleryImages={projectData?.gallery_images?.images || []}
           onSeeDetails={handleDetailsClick}
         />
       )}
