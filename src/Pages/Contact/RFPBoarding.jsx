@@ -621,11 +621,23 @@ function RFPBoarding({ onClose }) {
               <input
                 type="tel"
                 value={formData.mobile}
-                onChange={(e) =>
-                  setFormData({ ...formData, mobile: e.target.value })
-                }
+                onChange={(e) => {
+                  const value = e.target.value;
+                  // Allow only digits, +, -, (), and spaces
+                  const phoneRegex = /^[0-9+\-().\s]*$/;
+                  if (phoneRegex.test(value)) {
+                    setFormData({ ...formData, mobile: value });
+                  }
+                }}
+                placeholder="e.g., +1 (555) 123-4567"
                 className="w-full p-4 border-2 border-[#bdb8b2] focus:border-black outline-none text-lg"
               />
+              {formData.mobile &&
+                !/^[0-9+\-().\s]{10,}$/.test(formData.mobile) && (
+                  <p className="mt-2 text-sm text-red-600">
+                    Please enter a valid phone number (minimum 10 digits)
+                  </p>
+                )}
             </div>
 
             <div>
@@ -635,11 +647,19 @@ function RFPBoarding({ onClose }) {
               <input
                 type="email"
                 value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFormData({ ...formData, email: value });
+                }}
+                placeholder="e.g., user@example.com"
                 className="w-full p-4 border-2 border-[#bdb8b2] focus:border-black outline-none text-lg"
               />
+              {formData.email &&
+                !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email) && (
+                  <p className="mt-2 text-sm text-red-600">
+                    Please enter a valid email address
+                  </p>
+                )}
             </div>
 
             <div>

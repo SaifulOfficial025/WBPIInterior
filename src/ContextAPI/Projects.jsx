@@ -4,13 +4,26 @@ const API_BASE_URL = config.baseURL;
 
 export const getProjects = async () => {
   try {
+    const token = localStorage.getItem("accessToken");
+    const csrfToken = localStorage.getItem("csrf_token");
+
+    const headers = {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    }
+
+    if (csrfToken) {
+      headers["X-CSRFTOKEN"] = csrfToken;
+    }
+
     const response = await fetch(`${API_BASE_URL}projects/`, {
       method: "GET",
       mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
+      headers,
     });
 
     if (!response.ok) {

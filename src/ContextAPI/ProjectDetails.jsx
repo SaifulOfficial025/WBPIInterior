@@ -24,7 +24,31 @@ export const ProjectDetailsProvider = ({ children }) => {
     setError(null);
 
     try {
-      const response = await fetch(`${config.baseURL}projects/${projectId}/`);
+      const token = localStorage.getItem("accessToken");
+      const csrfToken = localStorage.getItem("csrf_token");
+
+      console.log("Token:", token ? "Present" : "Missing");
+      console.log("CSRF Token:", csrfToken ? "Present" : "Missing");
+
+      const headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      };
+
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
+      if (csrfToken) {
+        headers["X-CSRFTOKEN"] = csrfToken;
+      }
+
+      console.log("Fetching from:", `${config.baseURL}projects/${projectId}/`);
+      console.log("Headers:", headers);
+
+      const response = await fetch(`${config.baseURL}projects/${projectId}/`, {
+        headers,
+      });
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

@@ -806,11 +806,23 @@ function RFP({ onSuccess, onCancel, contactId }) {
                           key={key}
                           placeholder="OTHER"
                           options={[
+                            "Tiling",
+                            "Gypsum",
+                            "Painting",
+                            "Material Supply",
+                            "Mechanical",
+                            "Chiller Water",
+                            "Flushing",
+                            "DEWA Approval",
+                            "Electrical",
+                            "Plumbing",
+                            "Fire Alarm",
+                            "Fire Fighting",
+                            "Emergency & Exit",
+                            "Lighting",
                             "Signage",
-                            "Branding",
-                            "Furniture Assembly",
+                            "Graphics",
                             "Cleaning",
-                            "Landscaping",
                           ]}
                           value={formData.sowType[key] || ""}
                           onChange={(e) =>
@@ -840,7 +852,7 @@ function RFP({ onSuccess, onCancel, contactId }) {
                       { key: "SUB_FLS", label: "FLS" },
                       { key: "SUB_LANDSCAPING", label: "LANDSCAPING" },
                       { key: "SUB_STRUCTURAL", label: "STRUCTURAL" },
-                      { key: "SUB_LEED/WELL", label: "LEED/WELL" },
+                      { key: "SUB_LEED/WELL", label: "LEED" },
                     ].map((item, i) => (
                       <Checkbox
                         key={item.key}
@@ -861,11 +873,14 @@ function RFP({ onSuccess, onCancel, contactId }) {
                         key={key}
                         placeholder="OTHER"
                         options={[
-                          "MEP Consultant",
-                          "Lighting Designer",
-                          "AV Specialist",
-                          "Kitchen Consultant",
+                          "Lighting",
+                          "Signage",
                           "Wayfinding",
+                          "Art",
+                          "Graphics",
+                          "MEP",
+                          "WELL",
+                          "Architecture",
                         ]}
                         value={formData.sowType[key] || ""}
                         onChange={(e) =>

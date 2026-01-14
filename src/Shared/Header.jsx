@@ -131,7 +131,7 @@ function Header() {
                 </button>
                 {dropdownOpen && (
                   <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-                    <button
+                    {/* <button
                       onClick={() => {
                         setDropdownOpen(false);
                         setIsProfileOpen(true);
@@ -140,8 +140,8 @@ function Header() {
                       type="button"
                     >
                       Profile
-                    </button>
-                    <button
+                    </button> */}
+                    {/* <button
                       onClick={() => {
                         setDropdownOpen(false);
                         setIsPasswordModalOpen(true);
@@ -150,7 +150,7 @@ function Header() {
                       type="button"
                     >
                       Change Password
-                    </button>
+                    </button> */}
                     <button
                       onClick={handleSignOut}
                       className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
