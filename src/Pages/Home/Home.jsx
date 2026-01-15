@@ -1,6 +1,12 @@
 import React from "react";
 import Header from "../../Shared/Header";
+import Footer from "../../Shared/Footer";
 import homebg from "../../../public/homebg.svg";
+import Section1 from "./Section1";
+import WeBuild from "./WeBuild";
+import DesignWithHuman from "./DesignWithHuman";
+import Whatever from "./Whatever";
+import ChooseRealEstate from "./ChooseRealEstate";
 
 const Home = () => {
   return (
@@ -28,6 +34,14 @@ const Home = () => {
           <div className="w-36 h-36 bg-black bg-opacity-55 border border-gray-300/10"></div>
         </div> */}
       </main>
+      <div className="overflow-hidden">
+        <Section1 />
+        <WeBuild />
+        <DesignWithHuman />
+        <Whatever />
+        <ChooseRealEstate />
+        <Footer />
+      </div>
     </div>
   );
 };
